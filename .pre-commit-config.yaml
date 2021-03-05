@@ -1,0 +1,59 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.4.0
+    hooks:
+    -   id: check-added-large-files
+        args: ['--maxkb=100']
+    -   id: check-merge-conflict
+    -   id: check-yaml
+        exclude: meta.yaml
+    -   id: debug-statements
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v2.7.4
+    hooks:
+    -   id: pyupgrade
+        args: [--py36-plus]
+-   repo: https://github.com/asottile/reorder_python_imports
+    rev: v2.3.6
+    hooks:
+    -   id: reorder-python-imports
+-   repo: https://github.com/psf/black
+    rev: 19.10b0
+    hooks:
+    -   id: black
+-   repo: https://github.com/asottile/blacken-docs
+    rev: v1.9.1
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies: [black==19.10b0]
+-   repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.4
+    hooks:
+    -   id: flake8
+        types: [python]
+        additional_dependencies: [
+            flake8-alfred, flake8-bugbear, flake8-builtins, flake8-comprehensions,
+            flake8-eradicate, flake8-print, flake8-pytest-style,
+            flake8-todo, flake8-unused-arguments, pep8-naming, pydocstyle, Pygments,
+        ]
+        exclude: setup.py
+-   repo: https://github.com/PyCQA/doc8
+    rev: 0.9.0a1
+    hooks:
+    -   id: doc8
+        exclude: docs/source/acknowledgment.rst
+#- repo: https://github.com/codespell-project/codespell
+#  rev: v2.0.0
+#  hooks:
+#    - id: codespell
+#      exclude: docs/source
+- repo: https://github.com/asottile/add-trailing-comma
+  rev: v2.0.2
+  hooks:
+    - id: add-trailing-comma
+-   repo: meta
+    hooks:
+    -   id: check-hooks-apply
+    -   id: check-useless-excludes

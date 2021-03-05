@@ -1,0 +1,33 @@
+name: respyabc
+
+channels:
+  - defaults
+  - conda-forge
+  - opensourceeconomics
+
+dependencies:
+
+  - python=3.7
+  - pandas>=0.25
+  - numpy>=1.16
+  - scipy
+  - jupyter
+  - pytest>=5.4.3
+  - pip>=19.3.1
+  - pre-commit
+  - pytest-black
+  - pytest-flakes
+  - pytest-cov
+  - pytest-sugar
+  - jupyterlab
+  - respy
+
+  - pip:
+    - isort
+    - black==19.10b0
+    - black-nb
+    - flake8-nb
+    - numpydoc
+    - pytest-randomly
+    - pytest-stress
+    - pyabc
