@@ -4,8 +4,7 @@ from setuptools import setup
 p = find_packages()
 
 setup(
-    name="temfpy",
-    version="1.1.4",
+    name="respyabc",
     description=("Python package with test functions for various numerical components"),
     license="MIT",
     url="https://github.com/OpenSourceEconomics/temfpy",
