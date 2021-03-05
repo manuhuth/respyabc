@@ -1,10 +1,10 @@
 .. |logo| image:: https://raw.githubusercontent.com/OpenSourceEconomics/ose-corporate-design/master/logos/OSE_logo_no_type_RGB.svg
    :height: 25px
 
-|logo| temfpy
+|logo| respyabc
 ==============
 
-``temfpy`` is an open-source package providing test models and functions for standard numerical components in computational economic models. Please visit our `online documentation <https://temfpy.readthedocs.io/en/latest/>`_ for details.
+``respyabc` is an open-source package providing easy implementation of the ``pyabc`` package for dynamic discrete choice models created by the ``respy`` package. 
 
 .. image:: https://readthedocs.org/projects/temfpy/badge/?version=latest
     :target: https://temfpy.readthedocs.io/en/latest
