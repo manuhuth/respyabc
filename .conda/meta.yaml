@@ -1,0 +1,31 @@
+{% set data = load_setup_py_data() %}
+
+package:
+  name: respyabc
+  version: {{ data.get('version') }}
+
+source:
+  path: ../
+
+build:
+  noarch: python
+  number: 0
+
+requirements:
+  build:
+    - python
+    - setuptools
+  host:
+    - python
+
+  run:
+    - python
+    - numpy >=1.16
+    - pandas >=1
+    - scipy
+
+about:
+  home: https://github.com/manuhuth/respyabc
+  license: MIT
+  license_family: MIT
+  summary: Implementation of the pyabc package for discrete dynamic choice models produced by the respy package.
