@@ -5,11 +5,11 @@ p = find_packages()
 
 setup(
     name="respyabc",
-    description=("Python package with test functions for various numerical components"),
+    description=("Implementation of the pyabc package for discrete dynamic choice models produced by the respy package."),
     license="MIT",
-    url="https://github.com/OpenSourceEconomics/temfpy",
-    author="OpenSourceEconomics",
-    author_email="eisenhauer@policy-lab.org",
+    url="https://github.com/manuhuth/respyabc",
+    author="manuhuth",
+    author_email="manuel.huth@yahoo.com",
     packages=p,
     zip_safe=False,
     package_data={"utilities": []},
