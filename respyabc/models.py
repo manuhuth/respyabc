@@ -56,7 +56,7 @@ def choice_frequencies(df):
 
 
 def fill_nan(df):
-    """Fill missing values in data with zeros.
+    """Fill missing values in data frame with zeros.
 
     Parameters
     ----------
