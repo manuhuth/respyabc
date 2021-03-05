@@ -5,6 +5,7 @@ p = find_packages()
 
 setup(
     name="respyabc",
+    version="0.0.0",
     description=("Implementation of the pyabc package for discrete dynamic choice models produced by the respy package."),
     license="MIT",
     url="https://github.com/manuhuth/respyabc",
