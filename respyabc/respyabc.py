@@ -182,9 +182,9 @@ def plot_kernel_density_posterior(history, parameter, xmin, xmax):
         String including the name of the parameter for which
         the posterior should be plotted.
     xmin : float
-        Minimum value for x-axis' range.
+        Minimum value for the x-axis' range.
     xmax : float
-        Maximum value for x-axis' range.
+        Maximum value for the x-axis' range.
 
     Returns
     -------
