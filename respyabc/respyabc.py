@@ -65,7 +65,7 @@ def respyabc(
         choice model.
 
     numb_periods_respy : int
-        Length of decision horizon in the discrete choice model.
+        Length of the decision horizon in the discrete choice model.
 
     simulation_seed_respy : int
         Simulation seed for the discrete choice model.
