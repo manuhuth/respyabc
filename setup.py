@@ -12,7 +12,7 @@ setup(
     ),
     license="MIT",
     url="https://github.com/manuhuth/respyabc",
-    author="manuhuth",
+    author="manuhuth_try",
     author_email="manuel.huth@yahoo.com",
     packages=p,
     zip_safe=False,
