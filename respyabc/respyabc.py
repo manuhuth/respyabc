@@ -155,9 +155,8 @@ def dict_to_pyabc_distribution(parameters, prior_distribution="uniform"):
     output_string = "pyabc.Distribution("
     for index in keys:
         if index != keys[0]:
-            output_string = (
-                output_string
-                + (f", {index} = pyabc.RV({prior_distribution }, {parameters[index][0]}, {parameters[index][1]})")
+            output_string = output_string + (
+                f", {index} = pyabc.RV({prior_distribution }, {parameters[index][0]}, {parameters[index][1]})"
             )
         else:
             output_string = (

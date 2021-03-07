@@ -19,6 +19,7 @@ def distance_mean_squared(x, y):
 
     return np.mean((x["data"] - y["data"]) ** 2)
 
+
 def projection(X):
     """Compute the projection matrix of a given basis of a vector space.
 
@@ -32,7 +33,7 @@ def projection(X):
     projection_out : np.array
         The projection matrix.
     """
-    
+
     projection_out = X @ np.linalg.inv(X.transpose() @ X) @ X.transpose()
-    
+
     return projection_out
