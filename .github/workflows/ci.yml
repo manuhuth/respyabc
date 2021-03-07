@@ -23,7 +23,7 @@ jobs:
       run: |
         export PATH="$PATH:/usr/share/miniconda/bin"
         source .envrc
-        pytest --cov=temfpy --cov-report=xml
+        pytest --cov=respyabc --cov-report=xml
 
         # We want to make sure proper formatting of the notebooks.
         flake8-nb; [ $? -eq 0 ] || exit 1
