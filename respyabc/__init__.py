@@ -1,7 +1,8 @@
 """
 respyabc package.
 
-respyabc is an open-source package providing easy implementation of the pyabc package for dynamic discrete choice models created by the respy package.
+respyabc is an open-source package providing easy implementation of the
+pyabc package for dynamic discrete choice models created by the respy package.
 """
 __version__ = "0.0.0"
 

@@ -28,7 +28,7 @@ def model(parameter, model_to_simulate, parameter_for_simulation):
     df_frequencies = choice_frequencies(df_simulated_model)
 
     for index in ["a", "b", "edu", "home"]:
-        if not index in df_frequencies.columns:
+        if index not in df_frequencies.columns:
             df_frequencies[index] = 0
 
     df_frequencies.sort_index(axis=1, inplace=True)
