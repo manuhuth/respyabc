@@ -80,6 +80,7 @@ def respyabc(
 
     options["n_periods"] = numb_periods_respy
     options["simulation_agents"] = numb_individuals_respy
+
     model_to_simulate = rp.get_simulate_func(params, options)
 
     uniform = "uniform"
@@ -90,7 +91,9 @@ def respyabc(
     )
 
     model_abc = wrapped_partial(
-        model, model_to_simulate=model_to_simulate, parameter_for_simulation=params
+        model,
+        model_to_simulate=model_to_simulate,
+        parameter_for_simulation=params,
     )
 
     abc = pyabc.ABCSMC(

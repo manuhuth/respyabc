@@ -1,6 +1,7 @@
 import numpy as np
 
 
+
 def model(parameter, model_to_simulate, parameter_for_simulation):
     """Compute K&W 1994 model. Function is a wrapper around
        the respy.get_simulate_func() function to compute the model using the
@@ -20,9 +21,15 @@ def model(parameter, model_to_simulate, parameter_for_simulation):
         each period.
     """
     keys = list(parameter.keys())
+    params_single_index = multiindex_to_single_index(
+        df=parameter_for_simulation, column1="category", column2="name", link="_"
+    )
 
     for index in keys:
-        parameter_for_simulation.loc[index, ("value")] = parameter[index]
+        params_single_index.loc[index, ("value")] = parameter[index]
+
+    
+    parameter_for_simulation['value'] = np.array(params_single_index['value'])
 
     df_simulated_model = model_to_simulate(parameter_for_simulation)
     df_frequencies = choice_frequencies(df_simulated_model)
@@ -84,3 +91,36 @@ def wage_moments(df):
     A pandas data frame containing the first and second wage moments
     of each period."""
     return df.groupby(["Period"])["Wage"].describe()[["mean", "std"]]
+
+
+def multiindex_to_single_index(df, column1, column2, link="_"):
+    """Replaces a multiindex with a concatenated single index version
+    of the multiindex.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Pandas data frame with a multiindex.
+
+    column1 : str
+        Name of first multiindex column.
+
+    column2 : str
+        Name of second multiindex column.
+
+    link : str
+        String that is used to seperate the two multiindex columns within the
+        new string.
+
+    Returns
+    -------
+    Single index data frame.
+    """
+    index1 = df.index.get_level_values(column1)
+    index2 = df.index.get_level_values(column2)
+    single_index = index1 + link + index2
+
+    df2 = df.reset_index(drop=True)
+    df2.set_index(single_index, inplace=True)
+
+    return df2
