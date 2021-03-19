@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def model(parameter, model_to_simulate, parameter_for_simulation):
     """Compute K&W 1994 model. Function is a wrapper around
        the respy.get_simulate_func() function to compute the model using the
@@ -28,8 +27,7 @@ def model(parameter, model_to_simulate, parameter_for_simulation):
     for index in keys:
         params_single_index.loc[index, ("value")] = parameter[index]
 
-    
-    parameter_for_simulation['value'] = np.array(params_single_index['value'])
+    parameter_for_simulation["value"] = np.array(params_single_index["value"])
 
     df_simulated_model = model_to_simulate(parameter_for_simulation)
     df_frequencies = choice_frequencies(df_simulated_model)
