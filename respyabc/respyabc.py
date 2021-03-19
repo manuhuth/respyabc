@@ -21,6 +21,7 @@ def respyabc(
     parameters_prior,
     data,
     distance_abc,
+    descriptives="choice_frequencies",
     sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
     population_size_abc=1000,
     max_nr_populations_abc=10,
@@ -28,7 +29,6 @@ def respyabc(
     database_path_abc=None,
     numb_individuals_respy=1000,
     numb_periods_respy=40,
-    simulation_seed_respy=132,
 ):
     """Compute K&W 1994 model using pyabc. Workhorse of this project. Most
     other functions are used to support this function.
@@ -48,6 +48,11 @@ def respyabc(
     distance_abc : function
         A function that takes two model specifications as inputs and computes
         the difference between the summary statistics of the two model outcomes.
+
+    descriptives : str
+        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
+        descriptives with which the distance is computed are computed. The
+        default is ``choice_frequencies``.
 
     sampler : pyabc.sampler.function
         A function from the pyabc.sampler class.
@@ -75,9 +80,6 @@ def respyabc(
     numb_periods_respy : int
         Length of the decision horizon in the discrete choice model.
 
-    simulation_seed_respy : int
-        Simulation seed for the discrete choice model.
-
     Returns
     -------
     history : pyabc.object
@@ -103,6 +105,7 @@ def respyabc(
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,
         options_for_simulation=options,
+        descriptives=descriptives,
     )
 
     abc = pyabc.ABCSMC(
@@ -131,7 +134,7 @@ def get_simulate_func_options(
     df=None,
     n_simulation_periods=None,
 ):
-    """Rewrite get the simulation function such that options can be passed
+    """Rewrite respy's get_simulation_function such that options can be passed
     and therefore the seed be changed before any run.
 
     ----------
@@ -169,8 +172,6 @@ def get_simulate_func_options(
 
     solve = get_solve_func(params, options)
 
-    # We draw shocks for all observations and for all choices although some choices
-    # might not be available. Later, only the relevant shocks are selected.
     n_observations = (
         df.shape[0]
         if method == "one_step_ahead"

@@ -2,7 +2,11 @@ import numpy as np
 
 
 def model(
-    parameter, model_to_simulate, parameter_for_simulation, options_for_simulation
+    parameter,
+    model_to_simulate,
+    parameter_for_simulation,
+    options_for_simulation,
+    descriptives="choice_frequencies",
 ):
     """Compute K&W 1994 model. Function is a wrapper around
        the respy.get_simulate_func() function to compute the model using the
@@ -14,6 +18,20 @@ def model(
     parameter : dictionary
         A dictionary contaning the variables as key and the corresponding
         magnitude as value respectively.
+
+    model_to_simulate : object produced by respyabc.get_simulate_func_options
+        Model that specififes the respy set-up.
+
+    parameter_for_simulation : data.frame
+        Parameter that specify the respy model.
+
+    options_for_simulation : data.frame
+        Options that specify the respy model.
+
+    descriptives : str
+        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
+        descriptives with which the distance is computed are computed. The
+        default is ``choice_frequencies``.
 
     Returns
     -------
@@ -35,7 +53,31 @@ def model(
     df_simulated_model = model_to_simulate(
         parameter_for_simulation, options=options_for_simulation
     )
-    df_frequencies = choice_frequencies(df_simulated_model)
+
+    if descriptives == "choice_frequencies":
+        output = choice_frequencies_to_model_output_frequencies(df=df_simulated_model)
+    elif descriptives == "wage_moments":
+        output = {"data": np.array(fill_nan(wage_moments(df_simulated_model)))}
+
+    return output
+
+
+def choice_frequencies_to_model_output_frequencies(df):
+    """Processes the choice frequencies to the output frequencies.
+
+    Parameters
+    ----------
+    df : data.frame
+        Data frame for which the choice frequencies should be created.
+
+    Returns
+    -------
+    output_frequencies : dictionary
+        A dictionary containing the relative frequencies of each choice in
+        each period.
+    """
+
+    df_frequencies = choice_frequencies(df)
 
     for index in ["a", "b", "edu", "home"]:
         if index not in df_frequencies.columns:

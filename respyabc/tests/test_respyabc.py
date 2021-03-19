@@ -7,7 +7,7 @@ from respyabc.distances import distance_mean_squared
 from respyabc.respyabc import respyabc
 
 
-def prepare_test(parameter_true, prior_low, prior_size):
+def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
     """Wrapes all steps to run respyabc for one parameter.
 
     Parameters
@@ -36,15 +36,18 @@ def prepare_test(parameter_true, prior_low, prior_size):
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,
         options_for_simulation=options,
+        descriptives=descriptives,
     )
 
-    parameters_prior = {"wage_a_constant": [prior_low, prior_size]}
+    key = list(parameter_true.keys())
+    parameters_prior = {key[0]: [prior_low, prior_size]}
 
     respyabc(
         model=model,
         parameters_prior=parameters_prior,
         data=data,
         distance_abc=distance_mean_squared,
+        descriptives=descriptives,
         sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
         population_size_abc=3,
         max_nr_populations_abc=1,
@@ -53,11 +56,41 @@ def prepare_test(parameter_true, prior_low, prior_size):
     )
 
 
-def test_delta():
+def test_delta_choice_frequencies():
     parameter_true = {"delta_delta": 0.95}
-    prepare_test(parameter_true=parameter_true, prior_low=0.9, prior_size=0.9)
+    prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=0.9,
+        prior_size=0.9,
+        descriptives="choice_frequencies",
+    )
 
 
-def test_wage_a_constant():
+def test_wage_a_constant_choice_frequencies():
     parameter_true = {"wage_a_constant": 9.21}
-    prepare_test(parameter_true=parameter_true, prior_low=9, prior_size=0.9)
+    prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=9,
+        prior_size=0.9,
+        descriptives="choice_frequencies",
+    )
+
+
+def test_delta_wage_moments():
+    parameter_true = {"delta_delta": 0.95}
+    prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=0.9,
+        prior_size=0.9,
+        descriptives="wage_moments",
+    )
+
+
+def test_wage_a_constant_wage_moments():
+    parameter_true = {"wage_a_constant": 9.21}
+    prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=9,
+        prior_size=0.9,
+        descriptives="wage_moments",
+    )
