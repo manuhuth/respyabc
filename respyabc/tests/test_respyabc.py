@@ -47,10 +47,15 @@ def prepare_test(parameter_true, prior_low, prior_size):
         distance_abc=distance_mean_squared,
         sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
         population_size_abc=3,
-        max_nr_populations_abc=2,
-        minimum_epsilon_abc=0.1,
+        max_nr_populations_abc=1,
+        minimum_epsilon_abc=0.2,
         database_path_abc=None,
     )
+
+
+def test_delta():
+    parameter_true = {"delta_delta": 0.95}
+    prepare_test(parameter_true=parameter_true, prior_low=0.9, prior_size=0.9)
 
 
 def test_wage_a_constant():
