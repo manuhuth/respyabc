@@ -1,7 +1,9 @@
 import numpy as np
 
 
-def model(parameter, model_to_simulate, parameter_for_simulation):
+def model(
+    parameter, model_to_simulate, parameter_for_simulation, options_for_simulation
+):
     """Compute K&W 1994 model. Function is a wrapper around
        the respy.get_simulate_func() function to compute the model using the
        parameters from Kean & Wolpin 1994 but being able to vary over thr
@@ -29,7 +31,10 @@ def model(parameter, model_to_simulate, parameter_for_simulation):
 
     parameter_for_simulation["value"] = np.array(params_single_index["value"])
 
-    df_simulated_model = model_to_simulate(parameter_for_simulation)
+    options_for_simulation["simulation_seed"] = np.random.randint(0, 1000)
+    df_simulated_model = model_to_simulate(
+        parameter_for_simulation, options=options_for_simulation
+    )
     df_frequencies = choice_frequencies(df_simulated_model)
 
     for index in ["a", "b", "edu", "home"]:

@@ -1,11 +1,19 @@
 import respy as rp
 import pyabc
 
-from functools import partial
-from functools import update_wrapper
 import tempfile
 import os
 import matplotlib.pyplot as plt
+
+
+from respy.pre_processing.model_processing import process_params_and_options
+from respy.simulate import simulate
+from respy.simulate import _harmonize_simulation_arguments
+from respy.simulate import _process_input_df_for_simulation
+from respy.solve import get_solve_func
+from respy.shared import create_base_draws
+from functools import partial
+from functools import update_wrapper
 
 
 def respyabc(
@@ -81,7 +89,7 @@ def respyabc(
     options["n_periods"] = numb_periods_respy
     options["simulation_agents"] = numb_individuals_respy
 
-    model_to_simulate = rp.get_simulate_func(params, options)
+    model_to_simulate = get_simulate_func_options(params, options)
 
     uniform = "uniform"
     prior_abc = eval(
@@ -94,6 +102,7 @@ def respyabc(
         model,
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,
+        options_for_simulation=options,
     )
 
     abc = pyabc.ABCSMC(
@@ -113,6 +122,80 @@ def respyabc(
     )
 
     return history
+
+
+def get_simulate_func_options(
+    params,
+    options,
+    method="n_step_ahead_with_sampling",
+    df=None,
+    n_simulation_periods=None,
+):
+    """Rewrite get the simulation function such that options can be passed
+    and therefore the seed be changed before any run.
+
+    ----------
+    params : pandas.DataFrame
+        DataFrame containing the model parameters.
+
+    options : dict
+        Dictionary containing the model options.
+
+    method : {"n_step_ahead_with_sampling", "n_step_ahead_with_data", "one_step_ahead"}
+        The simulation method which can be one of three and is explained in more detail
+        in :func:`respy.simulate.simulate()`.
+
+    df : pandas.DataFrame or None, default None
+        DataFrame containing one or multiple observations per individual.
+
+    n_simulation_periods : int or None, default None
+        Simulate data for a number of periods. This options does not affect
+        ``options["n_periods"]`` which controls the number of periods for which decision
+        rules are computed.
+
+    Returns
+    -------
+    simulate_function : :func:`simulate`
+        Simulation function where all arguments except the parameter vector
+        and the options are set.
+    """
+    optim_paras, options = process_params_and_options(params, options)
+
+    n_simulation_periods, options = _harmonize_simulation_arguments(
+        method, df, n_simulation_periods, options
+    )
+
+    df = _process_input_df_for_simulation(df, method, options, optim_paras)
+
+    solve = get_solve_func(params, options)
+
+    # We draw shocks for all observations and for all choices although some choices
+    # might not be available. Later, only the relevant shocks are selected.
+    n_observations = (
+        df.shape[0]
+        if method == "one_step_ahead"
+        else df.shape[0] * n_simulation_periods
+    )
+    shape = (n_observations, len(optim_paras["choices"]))
+
+    base_draws_sim = create_base_draws(
+        shape, next(options["simulation_seed_startup"]), "random"
+    )
+    base_draws_wage = create_base_draws(
+        shape, next(options["simulation_seed_startup"]), "random"
+    )
+
+    simulate_function = partial(
+        simulate,
+        base_draws_sim=base_draws_sim,
+        base_draws_wage=base_draws_wage,
+        df=df,
+        method=method,
+        n_simulation_periods=n_simulation_periods,
+        solve=solve,
+    )
+
+    return simulate_function
 
 
 def wrapped_partial(func, *args, **kwargs):
