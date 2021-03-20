@@ -39,7 +39,7 @@ def point_estimate(history, run=None):
     return df_stacked_moments
 
 
-def central_credible_interval(history, parameter, alpha):
+def central_credible_interval(history, parameter, alpha=0.05):
     """Returns credible intervals for the all pyabc runs.
 
     Parameters
@@ -77,13 +77,16 @@ def plot_kernel_density_posterior(history, parameter, xmin, xmax):
 
     Parameters
     ----------
-    history : object
+    history : pyabc.history
         An object created by abc.run().
+
     parameter : str
         String including the name of the parameter for which
         the posterior should be plotted.
+
     xmin : float
         Minimum value for the x-axis' range.
+
     xmax : float
         Maximum value for the x-axis' range.
 
@@ -99,3 +102,49 @@ def plot_kernel_density_posterior(history, parameter, xmin, xmax):
             df, w, xmin=xmin, xmax=xmax, x=parameter, ax=ax, label="PDF t={}".format(t)
         )
     ax.legend()
+
+
+def plot_credible_intervals(
+    history,
+    parameter,
+    alpha=0.05,
+    main_title="Central Credible Intervals",
+    y_label=None,
+):
+    """Plot the credible intervals of the posterior distribution of an pyABC run.
+
+    Parameters
+    ----------
+    history : pyabc.history
+        An object created by abc.run().
+
+    parameter : str
+        String including the name of the parameter for which
+        the posterior should be plotted.
+
+    alpha : float
+        Level of credability. Must be between zero and one.
+
+    main_title : str
+        Main title of the plot.
+
+    y_label : str or None
+        Label of y axis. If `None`, name of parameter is used.
+
+    Returns
+    -------
+    Plot with the central credible intervals of the parameter.
+    """
+    if y_label is None:
+        y_label = parameter
+    df = central_credible_interval(history=history, parameter=parameter, alpha=alpha)
+    fig, ax = plt.subplots()
+    ax.errorbar(
+        range(history.max_t + 1),
+        df["estimate"],
+        yerr=(df["upper"] - df["estimate"]),
+        fmt="o",
+    )
+    ax.set_xticks(np.arange(history.max_t + 1))
+    ax.set_ylabel(ylabel=y_label)
+    fig.suptitle(main_title)
