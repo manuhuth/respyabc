@@ -4,8 +4,6 @@ import pyabc
 import tempfile
 import os
 
-# import matplotlib.pyplot as plt
-
 
 from respy.pre_processing.model_processing import process_params_and_options
 from respy.simulate import simulate
