@@ -1,5 +1,7 @@
 import respy as rp
 import pyabc
+import numpy as np
+import pandas as pd
 
 import tempfile
 import os
@@ -125,6 +127,30 @@ def respyabc(
     )
 
     return history
+
+
+def respyabc_mean_estimator(history, run):
+    """Returns point estimates for the pyabc run.
+
+    Parameters
+    ----------
+    seconds : float, time-difference
+        Time in seconds
+
+    Returns
+    -------
+    time : float
+        Magnitude of time.
+
+    unit : str
+        Time unit. Either be seconds, minutes or hours.
+    """
+    magnitudes, probabilities = history.get_distribution(m=0, t=run)
+    means = np.array(magnitudes).T @ np.array(probabilities)
+
+    df_means = pd.DataFrame(means.reshape(1, -1), columns=magnitudes.columns)
+
+    return df_means
 
 
 def get_simulate_func_options(
