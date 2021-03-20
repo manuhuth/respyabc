@@ -1,11 +1,10 @@
 import respy as rp
 import pyabc
-import numpy as np
-import pandas as pd
 
 import tempfile
 import os
-import matplotlib.pyplot as plt
+
+# import matplotlib.pyplot as plt
 
 
 from respy.pre_processing.model_processing import process_params_and_options
@@ -127,30 +126,6 @@ def respyabc(
     )
 
     return history
-
-
-def respyabc_mean_estimator(history, run):
-    """Returns point estimates for the pyabc run.
-
-    Parameters
-    ----------
-    seconds : float, time-difference
-        Time in seconds
-
-    Returns
-    -------
-    time : float
-        Magnitude of time.
-
-    unit : str
-        Time unit. Either be seconds, minutes or hours.
-    """
-    magnitudes, probabilities = history.get_distribution(m=0, t=run)
-    means = np.array(magnitudes).T @ np.array(probabilities)
-
-    df_means = pd.DataFrame(means.reshape(1, -1), columns=magnitudes.columns)
-
-    return df_means
 
 
 def get_simulate_func_options(
@@ -282,33 +257,3 @@ def dict_to_pyabc_distribution(parameters, prior_distribution="uniform"):
     output_string = output_string + ")"
 
     return output_string
-
-
-def plot_kernel_density_posterior(history, parameter, xmin, xmax):
-    """Plot the Kernel densities of the posterior distribution of an pyABC run.
-
-    Parameters
-    ----------
-    history : object
-        An object created by abc.run().
-    parameter : str
-        String including the name of the parameter for which
-        the posterior should be plotted.
-    xmin : float
-        Minimum value for the x-axis' range.
-    xmax : float
-        Maximum value for the x-axis' range.
-
-    Returns
-    -------
-    Plot with posterior distribution of parameter.
-    """
-
-    fig, ax = plt.subplots()
-    for t in range(history.max_t + 1):
-        df, w = history.get_distribution(m=0, t=t)
-        pyabc.visualization.plot_kde_1d(
-            df, w, xmin=xmin, xmax=xmax, x=parameter, ax=ax, label="PDF t={}".format(t)
-        )
-    # ax.axvline(observation, color="k", linestyle="dashed");
-    ax.legend()
