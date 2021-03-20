@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
-from scipy.stats import norm  #
+from scipy.stats import norm
 
 
 def point_estimate(history, run=None):
@@ -39,7 +39,55 @@ def point_estimate(history, run=None):
     return df_stacked_moments
 
 
-def central_credible_interval(history, parameter, alpha=0.05):
+def compute_distribution_bounds(history, parameter, alpha, run):
+    """Returns distribution bounds from pyabc posterior distribution.
+
+    Parameters
+    ----------
+    history : pyabc.history
+        History of the pyabc run.
+
+    parameter : str
+        Parameter for which the credible interval should be computed.
+
+    alpha : float
+        Level of credability. Must be between zero and one.
+
+    run : int
+        Positive integer determining which pyabc run should be used. If `None`
+        last run is used.
+
+    Returns
+    -------
+    lower: float
+        Lower bound of the interval.
+
+    upper: float
+        Upper bound of the interval.
+
+    """
+    if run is None:
+        run = history.max_t
+
+    magnitudes, probabilities = history.get_distribution(m=0, t=run)
+    magnitudes["probabilities"] = probabilities
+    magnitudes_sorted = magnitudes.sort_values(by=parameter)
+    magnitudes_sorted["cum_probabilities"] = magnitudes_sorted["probabilities"].cumsum()
+    cut_magnitudes = magnitudes_sorted[
+        (magnitudes_sorted["cum_probabilities"] >= alpha / 2)
+        & (magnitudes_sorted["cum_probabilities"] <= 1 - alpha / 2)
+    ]
+    cut_indexed = cut_magnitudes.reset_index(drop=True)
+    cut_magnitudes = cut_indexed[parameter]
+    lower = cut_magnitudes[0]
+    upper = cut_magnitudes[len(cut_magnitudes) - 1]
+
+    return lower, upper
+
+
+def central_credible_interval(
+    history, parameter, interval_type="simulated", alpha=0.05
+):
     """Returns credible intervals for the all pyabc runs.
 
     Parameters
@@ -49,6 +97,10 @@ def central_credible_interval(history, parameter, alpha=0.05):
 
     parameter : str
         Parameter for which the credible interval should be computed.
+
+    interval_type : str
+        Method that is used to compute the interval ranges. Must either be
+        `simulated` or `mean`.
 
     alpha : float
         Level of credability. Must be between zero and one.
@@ -63,8 +115,14 @@ def central_credible_interval(history, parameter, alpha=0.05):
     for t in range(history.max_t + 1):
         df_point_estimate = point_estimate(history, run=t)
         estimate, variance = df_point_estimate[parameter]
-        upper = norm.ppf(1 - alpha / 2, loc=estimate, scale=variance)
-        lower = norm.ppf(alpha, loc=estimate, scale=variance)
+        if interval_type == "simulated":
+            lower, upper = compute_distribution_bounds(
+                history=history, parameter=parameter, alpha=alpha, run=t
+            )
+        elif interval_type == "mean":
+            upper = norm.ppf(1 - alpha / 2, loc=estimate, scale=variance)
+            lower = norm.ppf(alpha, loc=estimate, scale=variance)
+
         ccf[t, :] = np.array([lower, estimate, upper])
 
     df_ccf = pd.DataFrame(ccf, columns=["lower", "estimate", "upper"])
@@ -107,6 +165,7 @@ def plot_kernel_density_posterior(history, parameter, xmin, xmax):
 def plot_credible_intervals(
     history,
     parameter,
+    interval_type="simulated",
     alpha=0.05,
     main_title="Central Credible Intervals",
     y_label=None,
@@ -121,6 +180,10 @@ def plot_credible_intervals(
     parameter : str
         String including the name of the parameter for which
         the posterior should be plotted.
+
+    interval_type : str
+        Method that is used to compute the interval ranges. Must either be
+        `simulated` or `mean`.
 
     alpha : float
         Level of credability. Must be between zero and one.
@@ -137,7 +200,9 @@ def plot_credible_intervals(
     """
     if y_label is None:
         y_label = parameter
-    df = central_credible_interval(history=history, parameter=parameter, alpha=alpha)
+    df = central_credible_interval(
+        history=history, parameter=parameter, interval_type=interval_type, alpha=alpha
+    )
     fig, ax = plt.subplots()
     ax.errorbar(
         range(history.max_t + 1),

@@ -43,7 +43,7 @@ def test_plot_kernel_density_posterior():
     )
 
 
-def test_plot_credible_intervals():
+def test_plot_credible_intervals_mean():
     parameter_true = {"delta_delta": 0.95}
     history = prepare_test_respyabc(
         parameter_true=parameter_true,
@@ -54,4 +54,20 @@ def test_plot_credible_intervals():
     plot_credible_intervals(
         history=history,
         parameter="delta_delta",
+        interval_type="mean",
+    )
+
+
+def test_plot_credible_intervals_simulated():
+    parameter_true = {"delta_delta": 0.95}
+    history = prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=0.9,
+        prior_size=0.09,
+        descriptives="choice_frequencies",
+    )
+    plot_credible_intervals(
+        history=history,
+        parameter="delta_delta",
+        interval_type="simulated",
     )
