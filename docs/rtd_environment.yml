@@ -14,11 +14,30 @@ dependencies:
   - scipy
   - seaborn
   - pytest
-  - numba
-  - chaospy
-  - numdifftools
   - respy
+  - scipy
+  - jupyter
+  - pytest>=5.4.3
+  - pip>=19.3.1
+  - pre-commit
+  - pytest-black
+  - pytest-flakes
+  - pytest-cov
+  - pytest-sugar
+  - jupyterlab
 
   - pip:
     - sphinxcontrib-bibtex<2.0.0
     - pyabc
+    - isort
+    - black==20.8b1
+    - black-nb
+    - flake8-nb
+    - numpydoc
+    - pytest-randomly
+    - pytest-stress
+    - sphinx_rtd_theme
+    - nbsphinx
+    - sphinxcontrib-bibtex
+    - cairosvg
+    - sphinxcontrib-svg2pdfconverter[CairoSVG]
