@@ -31,3 +31,8 @@ dependencies:
     - pytest-randomly
     - pytest-stress
     - pyabc
+    - sphinx_rtd_theme
+    - nbsphinx
+    - sphinxcontrib-bibtex
+    - cairosvg
+    - sphinxcontrib-svg2pdfconverter[CairoSVG]
