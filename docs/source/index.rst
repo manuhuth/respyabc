@@ -19,7 +19,7 @@ Welcome to respyabc's documentation!
 
 respyabc is a package that uses a likelihood-free inference framework to infer parameters from dynamic discrete choice models. Inference is conducted using Approximate Bayesian Computing and a Sequential Monte-Carlo algorithm via `pyABC <https://pyabc.readthedocs.io/en/latest/>`_. Models must be simulated via `respy <https://respy.readthedocs.io/en/latest/>`_. Currently, only the model of Keane and Wolpin `(1994) <https://www.jstor.org/stable/2109768?seq=1/>`_ is implemented. The extension to further models is the next step of the development phase.
 
-The package has been build and is maintained by Manuel Huth within the scope of the courses Effective Programming Practices for Economists and Scientific Computing, which are taught within the University of Bonn's Master in Economics.
+The package has been built and is maintained by Manuel Huth within the scope of the courses Effective Programming Practices for Economists and Scientific Computing, which are taught within the University of Bonn's Master in Economics.
 
 With ``conda`` available on your path, installing and testing
 ``respyabc`` is as simple as typing
