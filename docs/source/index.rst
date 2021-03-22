@@ -34,7 +34,7 @@ With ``conda`` available on your path, installing and testing
    :maxdepth: 2
    :caption: Tutorials
    
-   tutorial
+   tutorials/one_parameter.ipynb
    
 .. toctree::
    :maxdepth: 2
