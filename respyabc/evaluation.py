@@ -212,4 +212,5 @@ def plot_credible_intervals(
     )
     ax.set_xticks(np.arange(history.max_t + 1))
     ax.set_ylabel(ylabel=y_label)
+    ax.set_xlabel(ylabel="run")
     fig.suptitle(main_title)
