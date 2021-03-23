@@ -1,7 +1,7 @@
 """Tests to check if evaluation routines run."""
 from respyabc.tools import prepare_test_respyabc
-from respyabc.evaluation import point_estimate
-from respyabc.evaluation import central_credible_interval
+from respyabc.evaluation import compute_point_estimate
+from respyabc.evaluation import compute_central_credible_interval
 from respyabc.evaluation import plot_kernel_density_posterior
 from respyabc.evaluation import plot_credible_intervals
 
@@ -15,7 +15,7 @@ def test_point_estimate():
         descriptives="choice_frequencies",
     )
 
-    point_estimate(history=history)
+    compute_point_estimate(history=history)
 
 
 def test_central_credible_interval():
@@ -27,7 +27,9 @@ def test_central_credible_interval():
         descriptives="choice_frequencies",
     )
 
-    central_credible_interval(history=history, parameter="delta_delta", alpha=0.05)
+    compute_central_credible_interval(
+        history=history, parameter="delta_delta", alpha=0.05
+    )
 
 
 def test_plot_kernel_density_posterior():

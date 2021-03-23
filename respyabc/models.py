@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def model(
+def compute_model(
     parameter,
     model_to_simulate,
     parameter_for_simulation,
@@ -40,7 +40,7 @@ def model(
         each period.
     """
     keys = list(parameter.keys())
-    params_single_index = multiindex_to_single_index(
+    params_single_index = transform_multiindex_to_single_index(
         df=parameter_for_simulation, column1="category", column2="name", link="_"
     )
 
@@ -55,14 +55,16 @@ def model(
     )
 
     if descriptives == "choice_frequencies":
-        output = choice_frequencies_to_model_output_frequencies(df=df_simulated_model)
+        output = compute_choice_frequencies_to_model_output_frequencies(
+            df=df_simulated_model
+        )
     elif descriptives == "wage_moments":
-        output = {"data": np.array(fill_nan(wage_moments(df_simulated_model)))}
+        output = {"data": np.array(fill_nan(compute_wage_moments(df_simulated_model)))}
 
     return output
 
 
-def choice_frequencies_to_model_output_frequencies(df):
+def compute_choice_frequencies_to_model_output_frequencies(df):
     """Processes the choice frequencies to the output frequencies.
 
     Parameters
@@ -77,7 +79,7 @@ def choice_frequencies_to_model_output_frequencies(df):
         each period.
     """
 
-    df_frequencies = choice_frequencies(df)
+    df_frequencies = compute_choice_frequencies(df)
 
     for index in ["a", "b", "edu", "home"]:
         if index not in df_frequencies.columns:
@@ -90,7 +92,7 @@ def choice_frequencies_to_model_output_frequencies(df):
     return output_frequencies
 
 
-def choice_frequencies(df):
+def compute_choice_frequencies(df):
     """Calculate choice frequencies per Period in the discrete choice model.
 
     Parameters
@@ -123,7 +125,7 @@ def fill_nan(df):
     return df.fillna(0)
 
 
-def wage_moments(df):
+def compute_wage_moments(df):
     """Calculate first and second wage moment  in the discrete choice model.
 
     Parameters
@@ -138,7 +140,7 @@ def wage_moments(df):
     return df.groupby(["Period"])["Wage"].describe()[["mean", "std"]]
 
 
-def multiindex_to_single_index(df, column1, column2, link="_"):
+def transform_multiindex_to_single_index(df, column1, column2, link="_"):
     """Replaces a multiindex with a concatenated single index version
     of the multiindex.
 

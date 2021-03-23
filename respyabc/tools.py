@@ -1,12 +1,12 @@
 import respy as rp
 import pyabc
 
-from respyabc.models import model
-from respyabc.distances import distance_mean_squared
+from respyabc.models import compute_model
+from respyabc.distances import compute_mean_squared_distance
 from respyabc.respyabc import respyabc
 
 
-def time_convertion(seconds):
+def convert_time(seconds):
     """Takes seconds as input and turns it into minutes or hours, if necessary.
 
     Parameters
@@ -58,7 +58,7 @@ def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
     options["simulation_agents"] = 1000
     model_to_simulate = rp.get_simulate_func(params, options)
 
-    data = model(
+    data = compute_model(
         parameter_true,
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,
@@ -70,10 +70,10 @@ def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
     parameters_prior = {key[0]: [prior_low, prior_size]}
 
     history = respyabc(
-        model=model,
+        model=compute_model,
         parameters_prior=parameters_prior,
         data=data,
-        distance_abc=distance_mean_squared,
+        distance_abc=compute_mean_squared_distance,
         descriptives=descriptives,
         sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
         population_size_abc=3,

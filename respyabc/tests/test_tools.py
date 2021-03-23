@@ -1,5 +1,5 @@
 """Tests to check if tools run."""
-from respyabc.tools import time_convertion
+from respyabc.tools import convert_time
 from respyabc.tools import prepare_test_respyabc
 
 
@@ -24,15 +24,15 @@ def test_prepare_test_respyabc_wage_moments():
 
 
 def test_time_convertion1():
-    assert time_convertion(60)[0] == 1
-    assert time_convertion(60)[1] == "minutes"
+    assert convert_time(60)[0] == 1
+    assert convert_time(60)[1] == "minutes"
 
 
 def test_time_convertion2():
-    assert time_convertion(50)[0] == 50
-    assert time_convertion(50)[1] == "seconds"
+    assert convert_time(50)[0] == 50
+    assert convert_time(50)[1] == "seconds"
 
 
 def test_time_convertion3():
-    assert time_convertion(3600)[0] == 1
-    assert time_convertion(3600)[1] == "hours"
+    assert convert_time(3600)[0] == 1
+    assert convert_time(3600)[1] == "hours"

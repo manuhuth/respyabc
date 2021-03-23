@@ -94,12 +94,12 @@ def respyabc(
 
     uniform = "uniform"
     prior_abc = eval(
-        dict_to_pyabc_distribution(
+        convert_dict_to_pyabc_distribution(
             parameters=parameters_prior, prior_distribution=uniform
         )
     )
 
-    model_abc = wrapped_partial(
+    model_abc = wrap_partial(
         model,
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,
@@ -198,7 +198,7 @@ def get_simulate_func_options(
     return simulate_function
 
 
-def wrapped_partial(func, *args, **kwargs):
+def wrap_partial(func, *args, **kwargs):
     """Wrapper function to give partial functions the __name__ argument.
 
     Parameters
@@ -218,7 +218,7 @@ def wrapped_partial(func, *args, **kwargs):
     return partial_func
 
 
-def dict_to_pyabc_distribution(parameters, prior_distribution="uniform"):
+def convert_dict_to_pyabc_distribution(parameters, prior_distribution="uniform"):
     """Turn a dictionary including the prior distributions to a string with the
     code of the pyABCdistribution.
 

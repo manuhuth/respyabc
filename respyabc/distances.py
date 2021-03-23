@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def distance_mean_squared(x, y):
+def compute_mean_squared_distance(x, y):
     """Mean squared distance between model output matrices.
 
     Parameters
@@ -20,7 +20,7 @@ def distance_mean_squared(x, y):
     return np.mean((x["data"] - y["data"]) ** 2)
 
 
-def projection(X):
+def compute_projection_distance(X):
     """Compute the projection matrix of a given basis of a vector space.
 
     Parameters

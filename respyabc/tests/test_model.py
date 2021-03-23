@@ -1,7 +1,7 @@
 """Tests for models function."""
 import respy as rp
 
-from respyabc.models import model
+from respyabc.models import compute_model
 
 
 def prepare_test_model(parameter_true):
@@ -28,7 +28,7 @@ def prepare_test_model(parameter_true):
     options["simulation_agents"] = 1000
     model_to_simulate = rp.get_simulate_func(params, options)
 
-    model(
+    compute_model(
         parameter_true,
         model_to_simulate=model_to_simulate,
         parameter_for_simulation=params,

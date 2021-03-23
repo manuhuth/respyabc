@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 
 
-def point_estimate(history, run=None):
+def compute_point_estimate(history, run=None):
     """Returns point estimates for the pyabc run.
 
     Parameters
@@ -85,7 +85,7 @@ def compute_distribution_bounds(history, parameter, alpha, run):
     return lower, upper
 
 
-def central_credible_interval(
+def compute_central_credible_interval(
     history, parameter, interval_type="simulated", alpha=0.05
 ):
     """Returns credible intervals for the all pyabc runs.
@@ -113,7 +113,7 @@ def central_credible_interval(
     """
     ccf = np.full([history.max_t + 1, 3], np.nan)
     for t in range(history.max_t + 1):
-        df_point_estimate = point_estimate(history, run=t)
+        df_point_estimate = compute_point_estimate(history, run=t)
         estimate, variance = df_point_estimate[parameter]
         if interval_type == "simulated":
             lower, upper = compute_distribution_bounds(
@@ -200,7 +200,7 @@ def plot_credible_intervals(
     """
     if y_label is None:
         y_label = parameter
-    df = central_credible_interval(
+    df = compute_central_credible_interval(
         history=history, parameter=parameter, interval_type=interval_type, alpha=alpha
     )
     fig, ax = plt.subplots()
