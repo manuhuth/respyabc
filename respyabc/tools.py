@@ -130,7 +130,7 @@ def prepare_test_respyabc_model_selection(
         parameters_prior=parameters_prior,
         data=data,
         distance_abc=compute_mean_squared_distance,
-        descriptives=[descriptives, descriptives],
+        descriptives=descriptives,
         sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
         population_size_abc=2,
         max_nr_populations_abc=1,

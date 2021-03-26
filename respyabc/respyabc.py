@@ -296,7 +296,7 @@ def get_abc_object_model_selection(
                 model_to_simulate=model_to_simulate,
                 parameter_for_simulation=params,
                 options_for_simulation=options,
-                descriptives=descriptives[index],
+                descriptives=descriptives,
             )
         )
 
