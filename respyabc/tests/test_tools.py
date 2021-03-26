@@ -1,6 +1,7 @@
 """Tests to check if tools run."""
 from respyabc.tools import convert_time
 from respyabc.tools import prepare_test_respyabc
+from respyabc.tools import prepare_test_respyabc_model_selection
 
 
 def test_prepare_test_respyabc_choice_frequencies():
@@ -16,6 +17,16 @@ def test_prepare_test_respyabc_choice_frequencies():
 def test_prepare_test_respyabc_wage_moments():
     parameter_true = {"delta_delta": 0.95}
     prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=0.9,
+        prior_size=0.09,
+        descriptives="wage_moments",
+    )
+
+
+def test_prepare_test_respyabc_wage_moments_model_selection():
+    parameter_true = {"delta_delta": 0.95}
+    prepare_test_respyabc_model_selection(
         parameter_true=parameter_true,
         prior_low=0.9,
         prior_size=0.09,
