@@ -28,6 +28,7 @@ def respyabc(
     database_path_abc=None,
     numb_individuals_respy=1000,
     numb_periods_respy=40,
+    model_selection=False,
 ):
     """Compute K&W 1994 model using pyabc. Workhorse of this project. Most
     other functions are used to support this function.
@@ -79,6 +80,10 @@ def respyabc(
     numb_periods_respy : int
         Length of the decision horizon in the discrete choice model.
 
+    model_selection : bool
+        If `True`, the function expects a model selection procedure, if `False`
+        single inference is conducted.
+
     Returns
     -------
     history : pyabc.object
@@ -92,12 +97,100 @@ def respyabc(
 
     model_to_simulate = get_simulate_func_options(params, options)
 
-    uniform = "uniform"
-    prior_abc = eval(
-        convert_dict_to_pyabc_distribution(
-            parameters=parameters_prior, prior_distribution=uniform
+    if model_selection is False:
+        abc = get_abc_object_inference(
+            distance_abc=distance_abc,
+            population_size_abc=population_size_abc,
+            sampler=sampler,
+            parameters_prior=parameters_prior,
+            model=model,
+            model_to_simulate=model_to_simulate,
+            params=params,
+            options=options,
+            descriptives=descriptives,
         )
+
+    elif model_selection is True:
+        abc = get_abc_object_model_selection(
+            distance_abc=distance_abc,
+            population_size_abc=population_size_abc,
+            sampler=sampler,
+            parameters_prior=parameters_prior,
+            model=model,
+            model_to_simulate=model_to_simulate,
+            params=params,
+            options=options,
+            descriptives=descriptives,
+        )
+
+    if database_path_abc is None:
+        db_path_abc = "sqlite:///" + os.path.join(tempfile.gettempdir(), "test.db")
+
+    abc.new(db_path_abc, data)
+    history = abc.run(
+        minimum_epsilon=minimum_epsilon_abc, max_nr_populations=max_nr_populations_abc
     )
+
+    return history
+
+
+def get_abc_object_inference(
+    distance_abc,
+    population_size_abc,
+    sampler,
+    parameters_prior,
+    model,
+    model_to_simulate,
+    params,
+    options,
+    descriptives,
+):
+    """Returns abc object for inference.
+
+    Parameters
+    ----------
+    distance_abc : function
+        A function that takes two model specifications as inputs and computes
+        the difference between the summary statistics of the two model outcomes.
+
+    population_size_abc : int
+        Positive integer determining the number of particles to be drawn per
+        population during the abc algorithm.
+
+    sampler : pyabc.sampler.function
+        A function from the pyabc.sampler class.
+
+    parameters_prior : dictionary
+        A dictionary contaning the parameters as keys and the corresponding
+        distribution parameters in a tuple as values.
+
+    model : function
+        A model as defined by ``model``.
+
+    model_to_simulate : object produced by respyabc.get_simulate_func_options
+        Model that specififes the respy set-up.
+
+    params : data.frame
+        Parameter that specify the respy model.
+
+    options : data.frame
+        Options that specify the respy model.
+
+    descriptives : str
+        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
+        descriptives with which the distance is computed are computed. The
+        default is ``choice_frequencies``.
+
+
+    Returns
+    -------
+    history : pyabc.object
+        An object containing the history of the abc-run.
+    """
+    norm = "norm"
+    uniform = "uniform"
+
+    prior_abc = eval(convert_dict_to_pyabc_distribution(parameters=parameters_prior))
 
     model_abc = wrap_partial(
         model,
@@ -114,16 +207,97 @@ def respyabc(
         population_size=population_size_abc,
         sampler=sampler,
     )
+    norm
+    uniform
 
-    if database_path_abc is None:
-        db_path_abc = "sqlite:///" + os.path.join(tempfile.gettempdir(), "test.db")
+    return abc
 
-    abc.new(db_path_abc, data)
-    history = abc.run(
-        minimum_epsilon=minimum_epsilon_abc, max_nr_populations=max_nr_populations_abc
+
+def get_abc_object_model_selection(
+    distance_abc,
+    population_size_abc,
+    sampler,
+    parameters_prior,
+    model,
+    model_to_simulate,
+    params,
+    options,
+    descriptives,
+):
+    """Returns abc object for model selection.
+
+    Parameters
+    ----------
+    distance_abc : function
+        A function that takes two model specifications as inputs and computes
+        the difference between the summary statistics of the two model outcomes.
+
+    population_size_abc : int
+        Positive integer determining the number of particles to be drawn per
+        population during the abc algorithm.
+
+    sampler : pyabc.sampler.function
+        A function from the pyabc.sampler class.
+
+    parameters_prior : dictionary
+        A dictionary contaning the parameters as keys and the corresponding
+        distribution parameters in a tuple as values.
+
+    model : function
+        A model as defined by ``model``.
+
+    model_to_simulate : object produced by respyabc.get_simulate_func_options
+        Model that specififes the respy set-up.
+
+    params : data.frame
+        Parameter that specify the respy model.
+
+    options : data.frame
+        Options that specify the respy model.
+
+    descriptives : str
+        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
+        descriptives with which the distance is computed are computed. The
+        default is ``choice_frequencies``.
+
+
+    Returns
+    -------
+    history : pyabc.object
+        An object containing the history of the abc-run.
+    """
+
+    norm = "norm"
+    uniform = "uniform"
+
+    model_abc = []
+    prior_abc = []
+    for index in range(len(model)):
+        prior_abc.append(
+            eval(convert_dict_to_pyabc_distribution(parameters=parameters_prior[index]))
+        )
+
+        model_abc.append(
+            wrap_partial(
+                model[index],
+                model_to_simulate=model_to_simulate,
+                parameter_for_simulation=params,
+                options_for_simulation=options,
+                descriptives=descriptives[index],
+            )
+        )
+
+    abc = pyabc.ABCSMC(
+        model_abc,
+        prior_abc,
+        distance_abc,
+        population_size=population_size_abc,
+        sampler=sampler,
     )
+    norm
+    uniform
 
-    return history
+    return abc
 
 
 def get_simulate_func_options(
@@ -218,7 +392,7 @@ def wrap_partial(func, *args, **kwargs):
     return partial_func
 
 
-def convert_dict_to_pyabc_distribution(parameters, prior_distribution="uniform"):
+def convert_dict_to_pyabc_distribution(parameters):
     """Turn a dictionary including the prior distributions to a string with the
     code of the pyABCdistribution.
 
@@ -240,16 +414,17 @@ def convert_dict_to_pyabc_distribution(parameters, prior_distribution="uniform")
 
     output_string = "pyabc.Distribution("
     for index in keys:
+        prior_distribution = parameters[index][1]
         if index != keys[0]:
             output_string = output_string + (
-                f""", {index} = pyabc.RV({prior_distribution },
-                {parameters[index][0]}, {parameters[index][1]})"""
+                f""", {index} = pyabc.RV({prior_distribution},
+                {parameters[index][0][0]}, {parameters[index][0][1]})"""
             )
         else:
             output_string = (
                 output_string
-                + f"""{index} = pyabc.RV({prior_distribution },
-                {parameters[index][0]}, {parameters[index][1]})"""
+                + f"""{index} = pyabc.RV({prior_distribution},
+                {parameters[index][0][0]}, {parameters[index][0][1]})"""
             )
 
     output_string = output_string + ")"

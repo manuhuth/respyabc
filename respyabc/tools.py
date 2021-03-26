@@ -67,7 +67,7 @@ def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
     )
 
     key = list(parameter_true.keys())
-    parameters_prior = {key[0]: [prior_low, prior_size]}
+    parameters_prior = {key[0]: [[prior_low, prior_size], "uniform"]}
 
     history = respyabc(
         model=compute_model,
@@ -76,7 +76,7 @@ def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
         distance_abc=compute_mean_squared_distance,
         descriptives=descriptives,
         sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
-        population_size_abc=3,
+        population_size_abc=2,
         max_nr_populations_abc=1,
         minimum_epsilon_abc=0.2,
         database_path_abc=None,
