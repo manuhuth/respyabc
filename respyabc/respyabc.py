@@ -144,6 +144,8 @@ def get_abc_object_inference(
     params,
     options,
     descriptives,
+    norm="norm",
+    uniform="uniform",
 ):
     """Returns abc object for inference.
 
@@ -181,14 +183,20 @@ def get_abc_object_inference(
         descriptives with which the distance is computed are computed. The
         default is ``choice_frequencies``.
 
+    norm : str
+        Name of the normal distribution. Currently must be set
+        for the eval comment.
+
+    uniform : str
+        Name of the uniform distribution. Currently must be set
+        for the eval comment.
+
 
     Returns
     -------
     history : pyabc.object
         An object containing the history of the abc-run.
     """
-    norm = "norm"
-    uniform = "uniform"
 
     prior_abc = eval(convert_dict_to_pyabc_distribution(parameters=parameters_prior))
 
@@ -207,8 +215,6 @@ def get_abc_object_inference(
         population_size=population_size_abc,
         sampler=sampler,
     )
-    norm
-    uniform
 
     return abc
 
@@ -223,6 +229,8 @@ def get_abc_object_model_selection(
     params,
     options,
     descriptives,
+    norm="norm",
+    uniform="uniform",
 ):
     """Returns abc object for model selection.
 
@@ -260,15 +268,20 @@ def get_abc_object_model_selection(
         descriptives with which the distance is computed are computed. The
         default is ``choice_frequencies``.
 
+    norm : str
+        Name of the normal distribution. Currently must be set
+        for the eval comment.
+
+    uniform : str
+        Name of the uniform distribution. Currently must be set
+        for the eval comment.
+
 
     Returns
     -------
     history : pyabc.object
         An object containing the history of the abc-run.
     """
-
-    norm = "norm"
-    uniform = "uniform"
 
     model_abc = []
     prior_abc = []
@@ -294,8 +307,6 @@ def get_abc_object_model_selection(
         population_size=population_size_abc,
         sampler=sampler,
     )
-    norm
-    uniform
 
     return abc
 
