@@ -4,6 +4,9 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 from scipy.stats import norm
+from pyabc.visualization import plot_sample_numbers
+from pyabc.visualization import plot_epsilons
+from pyabc.visualization import plot_acceptance_rates_trajectory
 
 
 def compute_point_estimate(history, run=None):
@@ -214,3 +217,56 @@ def plot_credible_intervals(
     ax.set_ylabel(ylabel=y_label)
     ax.set_xlabel(xlabel="run")
     fig.suptitle(main_title)
+
+
+def plot_history_summary(
+    history,
+    parameter_name,
+    parameter_value,
+    confidence_levels=[0.95, 0.9, 0.5],
+    size=(12, 8),
+):
+    """Wrapper to plot the credible intervals of the posterior distribution,
+    the sample numbers, the epsilons and the acceptance rates of an pyABC run.
+
+    Parameters
+    ----------
+    history : pyabc.history
+        An object created by abc.run().
+
+    parameter_name : str
+        String including the name of the parameter for which
+        the posterior should be plotted.
+
+    parameter_value : float
+        Magnitude of true parameter.
+
+    confidence_levels : list
+        A list of floats indicating the levels for which the credible
+        intervals are computed.
+
+    size : tuple
+        Tuple of floats that is passed to `plt.gcf().set_size_inches()`.
+
+    Returns
+    -------
+    Credible intervals of the posterior distribution,
+    the sample numbers, the epsilons and the acceptance rates
+    """
+    fig, ax = plt.subplots(2, 2)
+
+    pyabc.visualization.plot_credible_intervals(
+        history,
+        levels=confidence_levels,
+        ts=range(history.max_t + 1),
+        show_mean=True,
+        show_kde_max_1d=True,
+        refval={parameter_name: parameter_value},
+        arr_ax=ax[0][0],
+    )
+    plot_sample_numbers(history, ax=ax[1][0])
+    plot_epsilons(history, ax=ax[0][1])
+    plot_acceptance_rates_trajectory(history, ax=ax[1][1])
+
+    plt.gcf().set_size_inches(size)
+    plt.gcf().tight_layout()
