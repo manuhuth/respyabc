@@ -42,7 +42,7 @@ def respyabc(
         A dictionary contaning the parameters as keys and the corresponding
         distribution parameters in a tuple as values.
 
-    data : np.array
+    data : numpy.array
         Numeric array of shape (``numb_individuals_respy``, ``number of choices``).
 
     distance_abc : function
@@ -171,10 +171,10 @@ def get_abc_object_inference(
     model_to_simulate : object produced by respyabc.get_simulate_func_options
         Model that specififes the respy set-up.
 
-    params : data.frame
+    params : pandas.DataFrame
         Parameter that specify the respy model.
 
-    options : data.frame
+    options : pandas.DataFrame
         Options that specify the respy model.
 
     descriptives : {"choice_frequencies", "wage_moments"}
@@ -255,10 +255,10 @@ def get_abc_object_model_selection(
     model_to_simulate : object produced by respyabc.get_simulate_func_options
         Model that specififes the respy set-up.
 
-    params : data.frame
+    params : pandas.DataFrame
         Parameter that specify the respy model.
 
-    options : data.frame
+    options : pandas.DataFrame
         Options that specify the respy model.
 
     descriptives : {"choice_frequencies", "wage_moments"}
@@ -319,6 +319,7 @@ def get_simulate_func_options(
     and therefore the seed be changed before any run. Documentation is adapted
     from `respy.simulate.get_simulate_func`
 
+    Parameters
     ----------
     params : pandas.DataFrame
         DataFrame containing the model parameters.
