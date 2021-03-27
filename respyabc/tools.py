@@ -48,6 +48,10 @@ def prepare_test_respyabc(parameter_true, prior_low, prior_size, descriptives):
     prior_size : float
         A float containing the length of the uniform prior.
 
+    descriptives : {"choice_frequencies", "wage_moments"}
+        Determines how the descriptives with which the distance is computed
+        are computed.
+
     Returns
     -------
     Runs respyabc for the specified parameter.
@@ -100,6 +104,10 @@ def prepare_test_respyabc_model_selection(
 
     prior_size : float
         A float containing the length of the uniform prior.
+
+    descriptives : {"choice_frequencies", "wage_moments"}
+        Determines how the descriptives with which the distance is computed
+        are computed. The default is ``choice_frequencies``.
 
     Returns
     -------

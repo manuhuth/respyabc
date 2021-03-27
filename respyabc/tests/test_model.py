@@ -12,12 +12,6 @@ def prepare_test_model(parameter_true):
     parameter_true : dict
         A dictionary containing the true parameter
 
-    prior_low : float
-        A float with the lower bound for the uniform prior.
-
-    prior_size : float
-        A float containing the length of the uniform prior.
-
     Returns
     -------
     Runs respyabc for the specified parameter.

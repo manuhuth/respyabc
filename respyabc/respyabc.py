@@ -49,38 +49,37 @@ def respyabc(
         A function that takes two model specifications as inputs and computes
         the difference between the summary statistics of the two model outcomes.
 
-    descriptives : str
-        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
-        descriptives with which the distance is computed are computed. The
-        default is ``choice_frequencies``.
+    descriptives : {"choice_frequencies", "wage_moments"}
+        Determines how the descriptives with which the distance is computed
+        are computed. The default is ``choice_frequencies``.
 
-    sampler : pyabc.sampler.function
+    sampler : pyabc.sampler.function, optional
         A function from the pyabc.sampler class.
 
-    population_size_abc : int
+    population_size_abc : int, optional
         Positive integer determining the number of particles to be drawn per
         population during the abc algorithm.
 
-    max_nr_populations_abc : int
+    max_nr_populations_abc : int, optional
         Positive integer determining the number of populations that are
         drawn for the abc algorithm.
 
-    minimum_epsilon_abc : float
+    minimum_epsilon_abc : float, optional
         Positive float determining the epsilon for the last population run
         of the abc algorithm.
 
-    database_path_abc : str
+    database_path_abc : str, optional
         Path where the abc runs are stored. If ``None``is supplied, runs
         are saved in the local temp folder.
 
-    numb_individuals_respy : int
+    numb_individuals_respy : int, optional
         Number of simulated independent individuals in the discrete
         choice model.
 
-    numb_periods_respy : int
+    numb_periods_respy : int, optional
         Length of the decision horizon in the discrete choice model.
 
-    model_selection : bool
+    model_selection : bool, optional
         If `True`, the function expects a model selection procedure, if `False`
         single inference is conducted.
 
@@ -178,16 +177,15 @@ def get_abc_object_inference(
     options : data.frame
         Options that specify the respy model.
 
-    descriptives : str
-        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
-        descriptives with which the distance is computed are computed. The
-        default is ``choice_frequencies``.
+    descriptives : {"choice_frequencies", "wage_moments"}
+        Determines how the descriptives with which the distance is computed
+        are computed.
 
-    norm : str
+    norm : str, optional
         Name of the normal distribution. Currently must be set
         for the eval comment.
 
-    uniform : str
+    uniform : str,
         Name of the uniform distribution. Currently must be set
         for the eval comment.
 
@@ -263,16 +261,15 @@ def get_abc_object_model_selection(
     options : data.frame
         Options that specify the respy model.
 
-    descriptives : str
-        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
-        descriptives with which the distance is computed are computed. The
-        default is ``choice_frequencies``.
+    descriptives : {"choice_frequencies", "wage_moments"}
+        Determines how the descriptives with which the distance is computed
+        are computed.
 
-    norm : str
+    norm : str, optional
         Name of the normal distribution. Currently must be set
         for the eval comment.
 
-    uniform : str
+    uniform : str, optional
         Name of the uniform distribution. Currently must be set
         for the eval comment.
 
@@ -319,7 +316,8 @@ def get_simulate_func_options(
     n_simulation_periods=None,
 ):
     """Rewrite respy's get_simulation_function such that options can be passed
-    and therefore the seed be changed before any run.
+    and therefore the seed be changed before any run. Documentation is adapted
+    from `respy.simulate.get_simulate_func`
 
     ----------
     params : pandas.DataFrame

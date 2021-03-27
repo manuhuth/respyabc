@@ -22,13 +22,13 @@ def compute_model(
     model_to_simulate : object produced by respyabc.get_simulate_func_options
         Model that specififes the respy set-up.
 
-    parameter_for_simulation : data.frame
+    parameter_for_simulation : pandas.DataFrame
         Parameter that specify the respy model.
 
-    options_for_simulation : data.frame
+    options_for_simulation : pandas.DataFrame
         Options that specify the respy model.
 
-    descriptives : str
+    descriptives : str, optional
         Either be `choice_frequencies`` or ``wage_moments``. Determines how the
         descriptives with which the distance is computed are computed. The
         default is ``choice_frequencies``.
@@ -69,7 +69,7 @@ def compute_choice_frequencies_to_model_output_frequencies(df):
 
     Parameters
     ----------
-    df : data.frame
+    df : pandas.DataFrame
         Data frame for which the choice frequencies should be created.
 
     Returns
@@ -97,7 +97,7 @@ def compute_choice_frequencies(df):
 
     Parameters
     ----------
-    df : pd.dataframe
+    df : pandas.DataFrame
         A pandas data frame containing the output of the discrete choice model.
 
     Returns
@@ -114,7 +114,7 @@ def fill_nan(df):
 
     Parameters
     ----------
-    df : pd.dataframe
+    df : pandas.DataFrame
         A pandas data frame containing missing values.
 
     Returns
@@ -130,7 +130,7 @@ def compute_wage_moments(df):
 
     Parameters
     ----------
-    df : pd.dataframe
+    df : pandas.DataFrame
         A pandas data frame containing the output of the discrete choice model.
 
     Returns
@@ -146,7 +146,7 @@ def transform_multiindex_to_single_index(df, column1, column2, link="_"):
 
     Parameters
     ----------
-    df : pd.DataFrame
+    df : pandas.DataFrame
         Pandas data frame with a multiindex.
 
     column1 : str
@@ -155,7 +155,7 @@ def transform_multiindex_to_single_index(df, column1, column2, link="_"):
     column2 : str
         Name of second multiindex column.
 
-    link : str
+    link : str, optional
         String that is used to seperate the two multiindex columns within the
         new string.
 

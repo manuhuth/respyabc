@@ -14,13 +14,13 @@ def compute_point_estimate(history, run=None):
     history : pyabc.history
         History of the pyabc run.
 
-    run : int
+    run : int, optional
         Positive integer determining which pyabc run should be used. If `None`
         last run is used.
 
     Returns
     -------
-    df_stacked_moments : data.frame
+    df_stacked_moments : pandas.DataFrame
         Data frame including the point estimate and its varianc for all parameters.
 
     """
@@ -98,16 +98,16 @@ def compute_central_credible_interval(
     parameter : str
         Parameter for which the credible interval should be computed.
 
-    interval_type : str
+    interval_type : str, optional
         Method that is used to compute the interval ranges. Must either be
         `simulated` or `mean`.
 
-    alpha : float
+    alpha : float, optional
         Level of credability. Must be between zero and one.
 
     Returns
     -------
-    df_ccf : data.frame
+    df_ccf : pandas.DataFrame
         Data frame containing the credability intervals for all runs.
 
     """
@@ -181,17 +181,17 @@ def plot_credible_intervals(
         String including the name of the parameter for which
         the posterior should be plotted.
 
-    interval_type : str
+    interval_type : str, optional
         Method that is used to compute the interval ranges. Must either be
         `simulated` or `mean`.
 
-    alpha : float
+    alpha : float, optional
         Level of credability. Must be between zero and one.
 
-    main_title : str
+    main_title : str, optional
         Main title of the plot.
 
-    y_label : str or None
+    y_label : str or None, default None
         Label of y axis. If `None`, name of parameter is used.
 
     Returns
