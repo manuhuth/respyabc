@@ -1,3 +1,7 @@
+"""This module contains the model functions that can be passed to
+the :func:`respyabc.respyabc()` function and functions that
+support these models."""
+
 import numpy as np
 
 
@@ -9,17 +13,19 @@ def compute_model(
     descriptives="choice_frequencies",
 ):
     """Compute K&W 1994 model. Function is a wrapper around
-       the respy.get_simulate_func() function to compute the model using the
+       the `respy.get_simulate_func()` function to compute the model using the
        parameters from Kean & Wolpin 1994 but being able to vary over thr
        parameters.
 
     Parameters
     ----------
-    parameter : dictionary
+    parameter : dict
         A dictionary contaning the variables as key and the corresponding
-        magnitude as value respectively.
+        magnitude as value.
 
-    model_to_simulate : object produced by respyabc.get_simulate_func_options
+    model_to_simulate : func
+        Function produced by
+        :func:`respyabc.respyabc.get_simulate_func_options()`
         Model that specififes the respy set-up.
 
     parameter_for_simulation : pandas.DataFrame
@@ -28,14 +34,14 @@ def compute_model(
     options_for_simulation : pandas.DataFrame
         Options that specify the respy model.
 
-    descriptives : str, optional
-        Either be `choice_frequencies`` or ``wage_moments``. Determines how the
-        descriptives with which the distance is computed are computed. The
-        default is ``choice_frequencies``.
+    descriptives : {`choice_frequencies``,``wage_moments``}, optional
+        Determines how the descriptives with which the
+        distance is computed are computed. The
+        default is ``"choice_frequencies"``.
 
     Returns
     -------
-    output_frequencies : dictionary
+    output_frequencies : dict
         A dictionary containing the relative frequencies of each choice in
         each period.
     """
@@ -74,7 +80,7 @@ def compute_choice_frequencies_to_model_output_frequencies(df):
 
     Returns
     -------
-    output_frequencies : dictionary
+    output_frequencies : dict
         A dictionary containing the relative frequencies of each choice in
         each period.
     """
@@ -102,8 +108,7 @@ def compute_choice_frequencies(df):
 
     Returns
     -------
-    A pandas data frame containing the relative choice frequencies
-    of each period.
+        A pandas data frame containing the relative choice frequencies of each period.
     """
 
     return df.groupby("Period").Choice.value_counts(normalize=True).unstack()
@@ -135,8 +140,8 @@ def compute_wage_moments(df):
 
     Returns
     -------
-    A pandas data frame containing the first and second wage moments
-    of each period."""
+    A pandas data frame containing the first and second wage moments of each period.
+    """
     return df.groupby(["Period"])["Wage"].describe()[["mean", "std"]]
 
 
@@ -161,7 +166,7 @@ def transform_multiindex_to_single_index(df, column1, column2, link="_"):
 
     Returns
     -------
-    Single index data frame.
+    Single indexed data frame.
     """
     index1 = df.index.get_level_values(column1)
     index2 = df.index.get_level_values(column2)

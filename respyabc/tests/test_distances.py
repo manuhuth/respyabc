@@ -1,4 +1,5 @@
-"""Tests for distance functions."""
+"""Tests to check distances run."""
+
 import numpy as np
 
 from respyabc.distances import compute_mean_squared_distance

@@ -1,3 +1,6 @@
+"""This module contains all plots and point estimates that can
+be used to conduct model evaluation."""
+
 import pyabc
 import numpy as np
 import pandas as pd
@@ -14,8 +17,9 @@ def compute_point_estimate(history, run=None):
 
     Parameters
     ----------
-    history : pyabc.history
-        History of the pyabc run.
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     run : int, optional
         Positive integer determining which pyabc run should be used. If `None`
@@ -47,14 +51,15 @@ def compute_distribution_bounds(history, parameter, alpha, run):
 
     Parameters
     ----------
-    history : pyabc.history
-        History of the pyabc run.
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     parameter : str
         Parameter for which the credible interval should be computed.
 
     alpha : float
-        Level of credability. Must be between zero and one.
+        Level of credibility. Must be between zero and one.
 
     run : int
         Positive integer determining which pyabc run should be used. If `None`
@@ -95,23 +100,24 @@ def compute_central_credible_interval(
 
     Parameters
     ----------
-    history : pyabc.history
-        History of the pyabc run.
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     parameter : str
         Parameter for which the credible interval should be computed.
 
-    interval_type : str, optional
-        Method that is used to compute the interval ranges. Must either be
-        `simulated` or `mean`.
+    interval_type : {"simulated", "mean"}, optional
+        Method that is used to compute the interval ranges.
+        The default is ``"simulated"``.
 
     alpha : float, optional
-        Level of credability. Must be between zero and one.
+        Level of credibility. Must be between zero and one.
 
     Returns
     -------
     df_ccf : pandas.DataFrame
-        Data frame containing the credability intervals for all runs.
+        Data frame containing the credibility intervals for all runs.
 
     """
     ccf = np.full([history.max_t + 1, 3], np.nan)
@@ -138,8 +144,9 @@ def plot_kernel_density_posterior(history, parameter, xmin, xmax):
 
     Parameters
     ----------
-    history : pyabc.history
-        An object created by abc.run().
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     parameter : str
         String including the name of the parameter for which
@@ -177,19 +184,20 @@ def plot_credible_intervals(
 
     Parameters
     ----------
-    history : pyabc.history
-        An object created by abc.run().
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     parameter : str
         String including the name of the parameter for which
         the posterior should be plotted.
 
-    interval_type : str, optional
-        Method that is used to compute the interval ranges. Must either be
-        `simulated` or `mean`.
+    interval_type : {"simulated", "mean"}, optional
+        Method that is used to compute the interval ranges.
+        The default is ``"simulated"``.
 
     alpha : float, optional
-        Level of credability. Must be between zero and one.
+        Level of credibility. Must be between zero and one.
 
     main_title : str, optional
         Main title of the plot.
@@ -231,8 +239,9 @@ def plot_history_summary(
 
     Parameters
     ----------
-    history : pyabc.history
-        An object created by abc.run().
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
 
     parameter_name : str
         String including the name of the parameter for which
@@ -241,12 +250,12 @@ def plot_history_summary(
     parameter_value : float
         Magnitude of true parameter.
 
-    confidence_levels : list
+    confidence_levels : list, optional
         A list of floats indicating the levels for which the credible
         intervals are computed.
 
-    size : tuple
-        Tuple of floats that is passed to `plt.gcf().set_size_inches()`.
+    size : tuple, optional
+        Tuple of floats that is passed to :func:`plt.gcf().set_size_inches()`.
 
     Returns
     -------

@@ -1,3 +1,7 @@
+"""This module hosts all distance functions that are supported
+to emasure the distance between the summary statistics
+of two populations."""
+
 import numpy as np
 
 
@@ -6,11 +10,13 @@ def compute_mean_squared_distance(x, y):
 
     Parameters
     ----------
-    x : dictionary
-        A dictionary created by model_delta.
+    x : dict
+        A dictionary containing ``"data"`` as key with
+        corresponding matrix as value.
 
-    y : dictionary
-        A dictionary created by model_delta.
+    y : dict
+        A dictionary containing ``"data"`` as key with
+        corresponding matrix as value.
 
     Returns
     -------

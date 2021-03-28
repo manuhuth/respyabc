@@ -1,4 +1,5 @@
-"""Tests to check if respyabc function runs."""
+"""Tests to check if :func:`respyabc.respyabc()` function runs."""
+
 from respyabc.tools import prepare_test_respyabc
 from respyabc.tools import prepare_test_respyabc_model_selection
 

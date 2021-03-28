@@ -1,4 +1,5 @@
-"""Tests for models function."""
+"""Tests to check if models run."""
+
 import respy as rp
 
 from respyabc.models import compute_model

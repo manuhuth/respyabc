@@ -1,3 +1,6 @@
+"""This module hosts useful tools that can be integrated in one's
+workflow or are used to write more concise tests."""
+
 import respy as rp
 import pyabc
 
@@ -11,8 +14,8 @@ def convert_time(seconds):
 
     Parameters
     ----------
-    seconds : float, time-difference
-        Time in seconds
+    seconds : float
+        Time in seconds.
 
     Returns
     -------
@@ -107,7 +110,7 @@ def prepare_test_respyabc_model_selection(
 
     descriptives : {"choice_frequencies", "wage_moments"}
         Determines how the descriptives with which the distance is computed
-        are computed. The default is ``choice_frequencies``.
+        are computed. The default is ``"choice_frequencies"``.
 
     Returns
     -------

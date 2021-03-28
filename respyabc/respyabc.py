@@ -1,18 +1,22 @@
+"""This module contains the main function :func:`respyabc.respyabc()`
+of the package. All other modules are mainly created to support this
+function."""
+
 import respy as rp
 import pyabc
 
 import tempfile
 import os
 
-
+from functools import partial
+from functools import update_wrapper
+from pyabc.sampler import MulticoreEvalParallelSampler
 from respy.pre_processing.model_processing import process_params_and_options
+from respy.shared import create_base_draws
 from respy.simulate import simulate
 from respy.simulate import _harmonize_simulation_arguments
 from respy.simulate import _process_input_df_for_simulation
 from respy.solve import get_solve_func
-from respy.shared import create_base_draws
-from functools import partial
-from functools import update_wrapper
 
 
 def respyabc(
@@ -21,7 +25,7 @@ def respyabc(
     data,
     distance_abc,
     descriptives="choice_frequencies",
-    sampler=pyabc.sampler.MulticoreEvalParallelSampler(),
+    sampler=MulticoreEvalParallelSampler(),
     population_size_abc=1000,
     max_nr_populations_abc=10,
     minimum_epsilon_abc=0.1,
@@ -36,7 +40,7 @@ def respyabc(
     Parameters
     ----------
     model : function
-        A model as defined by ``model``.
+        A model as defined by :func:`models.compute_model()`.
 
     parameters_prior : dictionary
         A dictionary contaning the parameters as keys and the corresponding
@@ -51,7 +55,7 @@ def respyabc(
 
     descriptives : {"choice_frequencies", "wage_moments"}
         Determines how the descriptives with which the distance is computed
-        are computed. The default is ``choice_frequencies``.
+        are computed. The default is ``"choice_frequencies"``.
 
     sampler : pyabc.sampler.function, optional
         A function from the pyabc.sampler class.
@@ -69,7 +73,7 @@ def respyabc(
         of the abc algorithm.
 
     database_path_abc : str, optional
-        Path where the abc runs are stored. If ``None``is supplied, runs
+        Path where the abc runs are stored. If ``None`` is supplied, runs
         are saved in the local temp folder.
 
     numb_individuals_respy : int, optional
@@ -80,13 +84,14 @@ def respyabc(
         Length of the decision horizon in the discrete choice model.
 
     model_selection : bool, optional
-        If `True`, the function expects a model selection procedure, if `False`
+        If ``True``, the function expects a model selection procedure, if `False`
         single inference is conducted.
 
     Returns
     -------
-    history : pyabc.object
-        An object containing the history of the abc-run.
+    history : pyabc.smc
+        An object of class pyabc.smc containing all the
+        information of the ``abc.run``.
     """
 
     params, options, data_stored = rp.get_example_model("kw_94_one")
@@ -168,7 +173,8 @@ def get_abc_object_inference(
     model : function
         A model as defined by ``model``.
 
-    model_to_simulate : object produced by respyabc.get_simulate_func_options
+    model_to_simulate : object produced by
+        :func:`respyabc.get_simulate_func_options`
         Model that specififes the respy set-up.
 
     params : pandas.DataFrame
@@ -182,12 +188,14 @@ def get_abc_object_inference(
         are computed.
 
     norm : str, optional
-        Name of the normal distribution. Currently must be set
-        for the eval comment.
+        Name of the normal distribution. Must be set
+        for the eval comment. Currently only ``"norm"`` is
+        supported.
 
     uniform : str,
-        Name of the uniform distribution. Currently must be set
-        for the eval comment.
+        Name of the uniform distribution. Must be set
+        for the eval comment. Currently only ``"uniform"`` is
+        supported.
 
 
     Returns
@@ -250,9 +258,10 @@ def get_abc_object_model_selection(
         distribution parameters in a tuple as values.
 
     model : function
-        A model as defined by ``model``.
+        A model as defined by :func:`models.compute_model()`.
 
-    model_to_simulate : object produced by respyabc.get_simulate_func_options
+    model_to_simulate : object produced by
+        :func:`respyabc.get_simulate_func_options()`
         Model that specififes the respy set-up.
 
     params : pandas.DataFrame
@@ -266,12 +275,14 @@ def get_abc_object_model_selection(
         are computed.
 
     norm : str, optional
-        Name of the normal distribution. Currently must be set
-        for the eval comment.
+        Name of the normal distribution. Must be set
+        for the eval comment. Currently only ``"norm"`` is
+        supported.
 
-    uniform : str, optional
-        Name of the uniform distribution. Currently must be set
-        for the eval comment.
+    uniform : str,
+        Name of the uniform distribution. Must be set
+        for the eval comment. Currently only ``"uniform"`` is
+        supported.
 
 
     Returns
@@ -317,7 +328,7 @@ def get_simulate_func_options(
 ):
     """Rewrite respy's get_simulation_function such that options can be passed
     and therefore the seed be changed before any run. Documentation is adapted
-    from `respy.simulate.get_simulate_func`
+    from :func:`respy.simulate.get_simulate_func()`
 
     Parameters
     ----------
@@ -408,17 +419,15 @@ def convert_dict_to_pyabc_distribution(parameters):
 
     Parameters
     ----------
-    parameters : dictionary
+    parameters : dict
         A dictionary contaning the parameters as keys and the corresponding
         distribution parameters in a tuple as values.
 
-    prior_distribution : str
-        Type of prior distribution used.
 
     Returns
     -------
     output_string: str
-        string with the code of the pyABCdistribution.
+        string with the code of the pyABC.Distribution.
     """
     keys = list(parameters.keys())
 
