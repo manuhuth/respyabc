@@ -22,7 +22,7 @@ respyabc is a package that uses a likelihood-free inference framework to infer p
 
 The package has been built and is maintained by Manuel Huth within the scope of the courses Effective Programming Practices for Economists and Scientific Computing, which are taught within the University of Bonn's Master in Economics.
 
-For more information on the package check out respyabc at its `docs <https://respyabc.readthedocs.io/en/latest/>`_
+For more information on the package check out respyabc at its `online documentation <https://respyabc.readthedocs.io/en/latest/>`_.
 
 Installing
 ==============
