@@ -44,4 +44,4 @@ The root directory of this repository contains two main folders ``respyabc`` and
 
 Example project
 ===================================
-You can find an exemple project that showcases how respyabc can be usd in an actual research paper in this `repository <https://github.com/manuhuth/respyabc_application>`_.
+You can find an example project that showcases how respyabc can be usd in an actual research paper in this `repository <https://github.com/manuhuth/respyabc_application>`_.
