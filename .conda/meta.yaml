@@ -23,9 +23,10 @@ requirements:
     - numpy >=1.16
     - pandas >=1
     - scipy
+    - pytest	
 
 about:
   home: https://github.com/manuhuth/respyabc
   license: MIT
   license_family: MIT
-  summary: Implementation of the pyabc package for discrete dynamic choice models produced by the respy package.
+  summary: Implementation of the pyabc package for finite-horizon discrete dynamic choice models produced by the respy package.

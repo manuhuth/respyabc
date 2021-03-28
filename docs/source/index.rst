@@ -24,13 +24,12 @@ respyabc is a package that uses a likelihood-free inference framework to infer p
 
 The package has been built and is maintained by Manuel Huth within the scope of the courses Effective Programming Practices for Economists and Scientific Computing, which are taught within the University of Bonn's Master in Economics.
 
-With ``conda`` available on your path, installing and testing
+With ``conda`` available on your path, installing
 ``respyabc`` is as simple as typing
 
 .. code-block:: bash
 
     $ conda install -c manuhuth respyabc
-    $ python -c "import respyabc; respyabc.test()"
 
 Examples
 ================
