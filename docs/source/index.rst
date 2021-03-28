@@ -29,6 +29,9 @@ With ``conda`` available on your path, installing
 
 .. code-block:: bash
 
+    $ pip install pyabc
+    $ conda config --add channels conda-forge
+    $ conda install -c opensourceeconomics respy
     $ conda install -c manuhuth respyabc
 
 Examples

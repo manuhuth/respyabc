@@ -26,13 +26,15 @@ For more information on the package check out respyabc at its `online documentat
 
 Installing
 ==============
-With ``conda`` available on your path, installing and testing
+With ``conda`` and ``pip`` available on your path, installing
 ``respyabc`` is as simple as typing
 
 .. code-block:: bash
 
+    $ pip install pyabc
+    $ conda config --add channels conda-forge
+    $ conda install -c opensourceeconomics respy
     $ conda install -c manuhuth respyabc
-    $ python -c "import respyabc; respyabc.test()"
     
 Repository structure
 =======================
