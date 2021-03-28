@@ -22,6 +22,10 @@ respyabc is a package that uses a likelihood-free inference framework to infer p
 
 The package has been built and is maintained by Manuel Huth within the scope of the courses Effective Programming Practices for Economists and Scientific Computing, which are taught within the University of Bonn's Master in Economics.
 
+For more information on the package check out respyabc at its `docs <https://respyabc.readthedocs.io/en/latest/>`_
+
+Installing
+==============
 With ``conda`` available on your path, installing and testing
 ``respyabc`` is as simple as typing
 
@@ -29,3 +33,15 @@ With ``conda`` available on your path, installing and testing
 
     $ conda install -c manuhuth respyabc
     $ python -c "import respyabc; respyabc.test()"
+    
+Repository structure
+=======================
+The root directory of this repository contains two main folders ``respyabc`` and ``docs``. 
+
+- ``respyabc``: The folder ``respyabc`` contains all modules and tests that are written for the package. An overview of the models is given at respyabc's `API reference <https://respyabc.readthedocs.io/en/latest/api.html>`_. The folder ``respyabc/tests`` contains all tests that are conducted in order to ensure the functionality of the package. 
+
+- ``docs``: The folder ``docs`` contains all files that describe the used modules and are used to build the `documentation <https://respyabc.readthedocs.io/en/latest/>`_. Example notebooks can be found in ``docs/source/tutorials``.
+
+Example project
+===================================
+You can find an exemple project that showcases how respyabc can be usd in an actual research paper in this `repository <https://github.com/manuhuth/respyabc_application>`_.

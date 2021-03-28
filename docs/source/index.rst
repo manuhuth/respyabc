@@ -32,6 +32,9 @@ With ``conda`` available on your path, installing and testing
     $ conda install -c manuhuth respyabc
     $ python -c "import respyabc; respyabc.test()"
 
+Examples
+================
+Check out the tutorials on this website or you can find an exemple project that showcases how respyabc can be usd in an actual research paper in this `repository <https://github.com/manuhuth/respyabc_application>`_. 
 
 .. toctree::
    :maxdepth: 1
@@ -54,4 +57,3 @@ Indices and tables
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
