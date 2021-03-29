@@ -10,6 +10,7 @@ from scipy.stats import norm
 from pyabc.visualization import plot_sample_numbers
 from pyabc.visualization import plot_epsilons
 from pyabc.visualization import plot_acceptance_rates_trajectory
+from pyabc.visualization import plot_kde_2d
 
 
 def compute_point_estimate(history, run=None):
@@ -279,3 +280,149 @@ def plot_history_summary(
 
     plt.gcf().set_size_inches(size)
     plt.gcf().tight_layout()
+
+
+def plot_multiple_credible_intervals(
+    history,
+    parameter_names,
+    number_rows,
+    number_columns,
+    confidence_levels=[0.95, 0.9, 0.5],
+    size=(12, 8),
+):
+    """Wrapper to plot the credible intervals for multiple parameters.
+
+    Parameters
+    ----------
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
+
+    parameter_names : list of str
+        Strings including the name of the parameter for which
+        the posterior should be plotted.
+
+    number_rows : int
+        Positive integer indicating the number of rows of plots.
+
+    number_columns : int
+        Positive integer indicating the number of plots per column.
+
+    confidence_levels : list, optional
+        A list of floats indicating the levels for which the credible
+        intervals are computed.
+
+    size : tuple, optional
+        Tuple of floats that is passed to :func:`plt.gcf().set_size_inches()`.
+
+    Returns
+    -------
+    Credible intervals of the posterior distributions.
+    """
+
+    fig, ax = plt.subplots(number_rows, number_columns)
+    column_index = 0
+    row_index = 0
+    for index in range(len(parameter_names)):
+        if number_rows == 1:
+            pyabc.visualization.plot_credible_intervals(
+                history,
+                levels=confidence_levels,
+                par_names=[parameter_names[index]],
+                ts=range(history.max_t + 1),
+                show_mean=True,
+                show_kde_max_1d=True,
+                arr_ax=ax[column_index],
+            )
+        else:
+            pyabc.visualization.plot_credible_intervals(
+                history,
+                levels=confidence_levels,
+                par_names=parameter_names[index],
+                ts=range(history.max_t + 1),
+                show_mean=True,
+                show_kde_max_1d=True,
+                arr_ax=ax[row_index][column_index],
+            )
+
+        if column_index == number_columns:
+            row_index = +1
+
+        column_index = +1
+
+    plt.gcf().set_size_inches(size)
+    plt.gcf().tight_layout()
+
+
+def plot_2d_histogram(
+    history,
+    parameter_names,
+    parameter_true,
+    xmin,
+    xmax,
+    ymin,
+    ymax,
+    numx=200,
+    numy=200,
+    label="true $\Theta$",
+    figsize=(10, 8),
+):
+    """Wrapper to plot 2 dimensional kernel density estimates.
+
+    Parameters
+    ----------
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
+
+    parameter_names : list of str
+        Strings including the name of the parameter for which
+        the posterior should be plotted.
+
+    xmin: float
+        Minimum value for axes of first parameter.
+
+    xmax: float
+        Maximum value for axes of first parameter.
+
+    ymin: float
+        Minimum value for axes of second parameter.
+
+    ymax: float
+        Maximum value for axes of second parameter.
+
+    label: str, optional
+        Label for the true value.
+
+    figsize : tuple, optional
+        Tuple of floats that is passed to figsize.
+
+    Returns
+    -------
+    Plots for two dimensional kernel density estimates over all populations.
+    """
+
+    fig = plt.figure(figsize=figsize)
+    for t in range(history.max_t + 1):
+        ncol = np.ceil(history.max_t / 3)
+        if ncol == 0:
+            ncol = 1
+        ax = fig.add_subplot(3, ncol, t + 1)
+
+        ax = plot_kde_2d(
+            *history.get_distribution(m=0, t=t),
+            parameter_names[0],
+            parameter_names[1],
+            xmin=xmin,
+            xmax=xmax,
+            ymin=ymin,
+            ymax=ymax,
+            numx=numx,
+            numy=numy,
+            ax=ax
+        )
+        ax.scatter([parameter_true[0]], [parameter_true[1]], color="C1", label=label)
+        ax.set_title("Posterior t={}".format(t))
+
+        ax.legend()
+    fig.tight_layout()
