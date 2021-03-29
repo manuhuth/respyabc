@@ -55,7 +55,9 @@ def compute_model(
 
     parameter_for_simulation["value"] = np.array(params_single_index["value"])
 
-    options_for_simulation["simulation_seed"] = np.random.randint(0, 1000)
+    options_for_simulation["simulation_seed"] = np.random.randint(0, 1000000000)
+    options_for_simulation["solution_seed"] = np.random.randint(0, 1000000000)
+    options_for_simulation["estimation_seed"] = np.random.randint(0, 1000000000)
     df_simulated_model = model_to_simulate(
         parameter_for_simulation, options=options_for_simulation
     )
