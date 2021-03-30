@@ -3,6 +3,10 @@ workflow or are used to write more concise tests."""
 
 import respy as rp
 import pyabc
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.stats as stats
+import math
 
 from respyabc.models import compute_model
 from respyabc.distances import compute_mean_squared_distance
@@ -211,3 +215,53 @@ def prepare_test_respyabc_two_params(
     )
 
     return history
+
+
+def plot_normal_densities(
+    mu1, var1, mu2, var2, vertical_marker, title="Normal prior densities"
+):
+    """plot two normal densities
+
+    Parameters
+    ----------
+    mu1 : float
+        Mean of first normal random variable.
+
+    var1 : float
+        Variance of first normal random variable.
+
+    mu2 : float
+        Mean of second normal random variable.
+
+    var2 : float
+        Variance of second normal random variable.
+
+    verticel_marker: float
+        True parameter value..
+
+    title: str
+        Title of the plot.
+
+    Returns
+    -------
+    Plot of normal densities.
+    """
+
+    sigma1 = math.sqrt(var1)
+    sigma2 = math.sqrt(var2)
+    x = np.linspace(mu1 - 3 * sigma1, mu1 + 3 * sigma1, 100)
+    y1 = stats.norm.pdf(x, mu1, sigma1)
+    y2 = stats.norm.pdf(x, mu2, sigma2)
+    plt.plot(x, y1, label="density 1")
+    plt.plot(x, y2, label="density 2")
+    plt.vlines(
+        vertical_marker,
+        colors="seagreen",
+        ymin=0,
+        ymax=np.max(np.concatenate((y1, y2))) * 1.1,
+        linestyles="dashed",
+        label="true mean",
+    )
+    plt.title(title)
+    plt.legend()
+    plt.show()

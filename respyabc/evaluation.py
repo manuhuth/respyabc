@@ -401,6 +401,7 @@ def plot_multiple_credible_intervals(
 
     if delete_axes is not None:
         fig.delaxes(ax[delete_axes[0]][delete_axes[1]])
+    plt.legend(lines, labels, bbox_to_anchor=(1.3, 1))
     plt.gcf().set_size_inches(size)
     plt.gcf().tight_layout()
 

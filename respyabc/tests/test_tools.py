@@ -1,5 +1,6 @@
 """Tests to check if tools run."""
 
+from respyabc.tools import plot_normal_densities
 from respyabc.tools import convert_time
 from respyabc.tools import prepare_test_respyabc
 from respyabc.tools import prepare_test_respyabc_model_selection
@@ -48,3 +49,7 @@ def test_time_convertion2():
 def test_time_convertion3():
     assert convert_time(3600)[0] == 1
     assert convert_time(3600)[1] == "hours"
+
+
+def plot_normal_densitites():
+    plot_normal_densities(mu1=0, var1=1, mu2=1, var2=1, vertical_marker=0.5)
