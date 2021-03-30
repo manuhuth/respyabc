@@ -37,6 +37,7 @@ With ``conda`` available on your path, installing
 Examples
 ================
 Check out the tutorials on this website or you can find an example project that showcases how respyabc can be used in an actual research paper in this `repository <https://github.com/manuhuth/respyabc_application>`_.
+
 .. toctree::
    :maxdepth: 1
    :caption: OSE grading
