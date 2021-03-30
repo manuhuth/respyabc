@@ -364,7 +364,7 @@ def plot_2d_histogram(
     ymax,
     numx=200,
     numy=200,
-    label="true $\Theta$",
+    label="true theta",
     figsize=(10, 8),
 ):
     """Wrapper to plot 2 dimensional kernel density estimates.
