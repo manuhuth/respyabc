@@ -11,6 +11,11 @@ from pyabc.visualization import plot_sample_numbers
 from pyabc.visualization import plot_epsilons
 from pyabc.visualization import plot_acceptance_rates_trajectory
 from pyabc.visualization import plot_kde_2d
+from pyabc.visualization import plot_effective_sample_sizes
+from pyabc.transition import MultivariateNormalTransition
+from pyabc.visualization.credible import compute_kde_max
+from pyabc.visualization.credible import compute_credible_interval
+from pyabc.visualization.credible import compute_quantile
 
 
 def compute_point_estimate(history, run=None):
@@ -282,6 +287,38 @@ def plot_history_summary(
     plt.gcf().tight_layout()
 
 
+def plot_history_summary_no_kde(
+    history,
+    size=(12, 8),
+):
+    """Wrapper to plot the credible intervals of the posterior distribution,
+    the sample numbers, the epsilons and the acceptance rates of an pyABC run.
+
+    Parameters
+    ----------
+    history : pyabc.smc
+        An object created by :func:`pyabc.abc.run()` or
+        :func:`respyabc.respyabc()`.
+
+    size : tuple, optional
+        Tuple of floats that is passed to :func:`plt.gcf().set_size_inches()`.
+
+    Returns
+    -------
+    Credible intervals of the posterior distribution,
+    the sample numbers, the epsilons and the acceptance rates
+    """
+    fig, ax = plt.subplots(2, 2)
+
+    plot_effective_sample_sizes(history, ax=ax[0][0])
+    plot_sample_numbers(history, ax=ax[1][0])
+    plot_epsilons(history, ax=ax[0][1])
+    plot_acceptance_rates_trajectory(history, ax=ax[1][1])
+
+    plt.gcf().set_size_inches(size)
+    plt.gcf().tight_layout()
+
+
 def plot_multiple_credible_intervals(
     history,
     parameter_names,
@@ -289,6 +326,8 @@ def plot_multiple_credible_intervals(
     number_columns,
     confidence_levels=[0.95, 0.9, 0.5],
     size=(12, 8),
+    legend_location="lower right",
+    delete_axes=None,
 ):
     """Wrapper to plot the credible intervals for multiple parameters.
 
@@ -315,17 +354,25 @@ def plot_multiple_credible_intervals(
     size : tuple, optional
         Tuple of floats that is passed to :func:`plt.gcf().set_size_inches()`.
 
+    legend_location : str, optional
+        Location of legend in plot. Default is "lower right"
+
+    delete_axes : list of integers or None
+        If list of integers, list specifies position of plot that should
+        be deleted.
+
     Returns
     -------
     Credible intervals of the posterior distributions.
     """
 
     fig, ax = plt.subplots(number_rows, number_columns)
+
     column_index = 0
     row_index = 0
     for index in range(len(parameter_names)):
         if number_rows == 1:
-            pyabc.visualization.plot_credible_intervals(
+            plot_credible_intervals_pyabc(
                 history,
                 levels=confidence_levels,
                 par_names=[parameter_names[index]],
@@ -335,21 +382,25 @@ def plot_multiple_credible_intervals(
                 arr_ax=ax[column_index],
             )
         else:
-            pyabc.visualization.plot_credible_intervals(
+            plot_credible_intervals_pyabc(
                 history,
                 levels=confidence_levels,
-                par_names=parameter_names[index],
+                par_names=[parameter_names[index]],
                 ts=range(history.max_t + 1),
                 show_mean=True,
                 show_kde_max_1d=True,
                 arr_ax=ax[row_index][column_index],
             )
 
-        if column_index == number_columns:
-            row_index = +1
+        column_index += 1
+        if (column_index) == number_columns:
+            row_index += 1
+            column_index = 0
+    lines_labels = [ax.get_legend_handles_labels() for ax in fig.axes]
+    lines, labels = lines_labels[0]
 
-        column_index = +1
-
+    if delete_axes is not None:
+        fig.delaxes(ax[delete_axes[0]][delete_axes[1]])
     plt.gcf().set_size_inches(size)
     plt.gcf().tight_layout()
 
@@ -419,10 +470,196 @@ def plot_2d_histogram(
             ymax=ymax,
             numx=numx,
             numy=numy,
-            ax=ax
+            ax=ax,
         )
         ax.scatter([parameter_true[0]], [parameter_true[1]], color="C1", label=label)
         ax.set_title("Posterior t={}".format(t))
 
         ax.legend()
     fig.tight_layout()
+
+
+def plot_credible_intervals_pyabc(
+    history,
+    m=0,
+    ts=None,
+    plot_legend=False,
+    par_names=None,
+    levels=None,
+    show_mean=False,
+    show_kde_max=False,
+    show_kde_max_1d=False,
+    size=None,
+    refval=None,
+    refval_color="C1",
+    kde=None,
+    kde_1d=None,
+    arr_ax=None,
+):
+    """Taken from pyABC to adjust legend
+    settings. Plot credible intervals over time.
+
+    Parameters
+    ----------
+    history: History
+        The history to extract data from.
+
+    m: int, optional (default = 0)
+        The id of the model to plot for.
+
+    ts: Union[List[int], int], optional (default = all)
+        The time points to plot for.
+
+    par_names: List[str], optional
+        The parameter to plot for. If None, then all parameters are used.
+
+    levels: List[float], optional (default = [0.95])
+        Confidence intervals to compute.
+
+    show_mean: bool, optional (default = False)
+        Whether to show the mean apart from the median as well.
+
+    show_kde_max: bool, optional (default = False)
+        Whether to show the one of the sampled points that gives the highest
+        KDE value for the specified KDE.
+        Note: It is not attemtped to find the overall hightest KDE value, but
+        rather the sampled point with the highest value is taken as an
+        approximation (of the MAP-value).
+
+    show_kde_max_1d: bool, optional (default = False)
+        Same as `show_kde_max`, but here the KDE is applied componentwise.
+
+    size: tuple of float
+        Size of the plot.
+
+    refval: dict, optional (default = None)
+        A dictionary of reference parameter values to plot for each of
+        `par_names`.
+
+    refval_color: str, optional
+        Color to use for the reference value.
+
+    kde: Transition, optional (default = MultivariateNormalTransition)
+        The KDE to use for `show_kde_max`.
+
+    kde_1d: Transition, optional (default = MultivariateNormalTransition)
+        The KDE to use for `show_kde_max_1d`.
+
+    arr_ax: List, optional
+        Array of axes to use. Assumed to be a 1-dimensional list.
+
+    Returns
+    -------
+    arr_ax: Array of generated axes.
+    """
+    if levels is None:
+        levels = [0.95]
+    levels = sorted(levels)
+    if par_names is None:
+        # extract all parameter names
+        df, _ = history.get_distribution(m=m)
+        par_names = list(df.columns.values)
+    # dimensions
+    n_par = len(par_names)
+    n_confidence = len(levels)
+    if ts is None:
+        ts = list(range(0, history.max_t + 1))
+    n_pop = len(ts)
+
+    # prepare axes
+    if arr_ax is None:
+        _, arr_ax = plt.subplots(
+            nrows=n_par, ncols=1, sharex=False, sharey=False, figsize=size
+        )
+    if not isinstance(arr_ax, (list, np.ndarray)):
+        arr_ax = [arr_ax]
+    fig = arr_ax[0].get_figure()
+
+    # prepare matrices
+    cis = np.empty((n_par, n_pop, 2 * n_confidence))
+    median = np.empty((n_par, n_pop))
+    if show_mean:
+        mean = np.empty((n_par, n_pop))
+    if show_kde_max:
+        kde_max = np.empty((n_par, n_pop))
+    if show_kde_max_1d:
+        kde_max_1d = np.empty((n_par, n_pop))
+    if kde is None and show_kde_max:
+        kde = MultivariateNormalTransition()
+    if kde_1d is None and show_kde_max_1d:
+        kde_1d = MultivariateNormalTransition()
+
+    # fill matrices
+    # iterate over populations
+    for i_t, t in enumerate(ts):
+        df, w = history.get_distribution(m=m, t=t)
+        # normalize weights to be sure
+        w /= w.sum()
+        # fit kde
+        if show_kde_max:
+            _kde_max_pnt = compute_kde_max(kde, df, w)
+        # iterate over parameters
+        for i_par, par in enumerate(par_names):
+            # as numpy array
+            vals = np.array(df[par])
+            # median
+            median[i_par, i_t] = compute_quantile(vals, w, 0.5)
+            # mean
+            if show_mean:
+                mean[i_par, i_t] = np.sum(w * vals)
+            # kde max
+            if show_kde_max:
+                kde_max[i_par, i_t] = _kde_max_pnt[par]
+            if show_kde_max_1d:
+                _kde_max_1d_pnt = compute_kde_max(kde_1d, df[[par]], w)
+                kde_max_1d[i_par, i_t] = _kde_max_1d_pnt[par]
+            # levels
+            for i_c, confidence in enumerate(levels):
+                lb, ub = compute_credible_interval(vals, w, confidence)
+                cis[i_par, i_t, i_c] = lb
+                cis[i_par, i_t, -1 - i_c] = ub
+
+    # plot
+    for i_par, (par, ax) in enumerate(zip(par_names, arr_ax)):
+        for i_c, confidence in reversed(list(enumerate(levels))):
+            ax.errorbar(
+                x=range(n_pop),
+                y=median[i_par].flatten(),
+                yerr=[
+                    median[i_par] - cis[i_par, :, i_c],
+                    cis[i_par, :, -1 - i_c] - median[i_par],
+                ],
+                capsize=(5.0 / n_confidence) * (i_c + 1),
+                label="{:.2f}".format(confidence),
+            )
+        ax.set_title(f"Parameter {par}")
+        # mean
+        if show_mean:
+            ax.plot(range(n_pop), mean[i_par], "x-", label="Mean")
+        # kde max
+        if show_kde_max:
+            ax.plot(range(n_pop), kde_max[i_par], "x-", label="Max KDE")
+        if show_kde_max_1d:
+            ax.plot(range(n_pop), kde_max_1d[i_par], "x-", label="Max KDE 1d")
+        # reference value
+        if refval is not None:
+            ax.hlines(
+                refval[par],
+                xmin=0,
+                xmax=n_pop - 1,
+                color=refval_color,
+                label="Reference value",
+            )
+        ax.set_xticks(range(n_pop))
+        ax.set_xticklabels(ts)
+        ax.set_ylabel(par)
+        if plot_legend is True:
+            ax.legend()
+
+    # format
+    arr_ax[-1].set_xlabel("Population t")
+    if size is not None:
+        fig.set_size_inches(size)
+    fig.tight_layout()
+
+    return arr_ax

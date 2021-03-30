@@ -9,6 +9,7 @@ from respyabc.evaluation import plot_credible_intervals
 from respyabc.evaluation import plot_multiple_credible_intervals
 from respyabc.evaluation import plot_history_summary
 from respyabc.evaluation import plot_2d_histogram
+from respyabc.evaluation import plot_history_summary_no_kde
 
 
 def test_point_estimate():
@@ -89,6 +90,17 @@ def test_plot_history_summary():
         descriptives="choice_frequencies",
     )
     plot_history_summary(history, parameter_name="delta_delta", parameter_value=0.95)
+
+
+def test_plot_history_summary_no_kde():
+    parameter_true = {"delta_delta": 0.95}
+    history = prepare_test_respyabc(
+        parameter_true=parameter_true,
+        prior_low=0.9,
+        prior_size=0.09,
+        descriptives="choice_frequencies",
+    )
+    plot_history_summary_no_kde(history)
 
 
 def test_plot_multiple_credible_intervals():
