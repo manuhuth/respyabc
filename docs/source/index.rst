@@ -43,6 +43,7 @@ Check out the tutorials on this website or you can find an example project that 
    :caption: OSE grading
    
    tutorials/ose_grading.ipynb
+   tutorials/ose_grading_fast_run.ipynb
 
 .. toctree::
    :maxdepth: 1
