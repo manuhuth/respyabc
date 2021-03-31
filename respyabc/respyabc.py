@@ -1,34 +1,34 @@
 """This module contains the main function :func:`respyabc.respyabc()`
 of the package. All other modules are mainly created to support this
 function."""
-
-import respy as rp
-import pyabc
-
-import tempfile
 import os
-
+import tempfile
 from functools import partial
 from functools import update_wrapper
+
+import pyabc
+import respy as rp
 from pyabc.sampler import MulticoreEvalParallelSampler
 from respy.pre_processing.model_processing import process_params_and_options
 from respy.shared import create_base_draws
-from respy.simulate import simulate
 from respy.simulate import _harmonize_simulation_arguments
 from respy.simulate import _process_input_df_for_simulation
+from respy.simulate import simulate
 from respy.solve import get_solve_func
+
+from respyabc.distances import compute_mean_squared_distance
 
 
 def respyabc(
     model,
     parameters_prior,
     data,
-    distance_abc,
+    distance_abc=compute_mean_squared_distance,
     descriptives="choice_frequencies",
     sampler=MulticoreEvalParallelSampler(),
-    population_size_abc=1000,
+    population_size_abc=500,
     max_nr_populations_abc=10,
-    minimum_epsilon_abc=0.1,
+    minimum_epsilon_abc=0.05,
     database_path_abc=None,
     numb_individuals_respy=1000,
     numb_periods_respy=40,
@@ -132,7 +132,8 @@ def respyabc(
 
     abc.new(db_path_abc, data)
     history = abc.run(
-        minimum_epsilon=minimum_epsilon_abc, max_nr_populations=max_nr_populations_abc
+        minimum_epsilon=minimum_epsilon_abc,
+        max_nr_populations=max_nr_populations_abc,
     )
 
     return history
@@ -295,7 +296,9 @@ def get_abc_object_model_selection(
     prior_abc = []
     for index in range(len(model)):
         prior_abc.append(
-            eval(convert_dict_to_pyabc_distribution(parameters=parameters_prior[index]))
+            eval(
+                convert_dict_to_pyabc_distribution(parameters=parameters_prior[index]),
+            ),
         )
 
         model_abc.append(
@@ -305,7 +308,7 @@ def get_abc_object_model_selection(
                 parameter_for_simulation=params,
                 options_for_simulation=options,
                 descriptives=descriptives,
-            )
+            ),
         )
 
     abc = pyabc.ABCSMC(
@@ -359,7 +362,10 @@ def get_simulate_func_options(
     optim_paras, options = process_params_and_options(params, options)
 
     n_simulation_periods, options = _harmonize_simulation_arguments(
-        method, df, n_simulation_periods, options
+        method,
+        df,
+        n_simulation_periods,
+        options,
     )
 
     df = _process_input_df_for_simulation(df, method, options, optim_paras)
@@ -374,10 +380,14 @@ def get_simulate_func_options(
     shape = (n_observations, len(optim_paras["choices"]))
 
     base_draws_sim = create_base_draws(
-        shape, next(options["simulation_seed_startup"]), "random"
+        shape,
+        next(options["simulation_seed_startup"]),
+        "random",
     )
     base_draws_wage = create_base_draws(
-        shape, next(options["simulation_seed_startup"]), "random"
+        shape,
+        next(options["simulation_seed_startup"]),
+        "random",
     )
 
     simulate_function = partial(
